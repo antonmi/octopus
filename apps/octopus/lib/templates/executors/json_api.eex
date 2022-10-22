@@ -1,0 +1,5 @@
+defmodule Octopus.Service.<%= name %> do
+  def call(params) do
+    Octopus.Executors.JsonApi.call(:"<%= method %>", "<%= url %>", params)
+  end
+end

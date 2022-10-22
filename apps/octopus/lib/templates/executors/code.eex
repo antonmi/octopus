@@ -1,0 +1,3 @@
+defmodule Octopus.Service.<%= name %> do
+  <%= code %>
+end

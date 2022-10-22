@@ -1,0 +1,5 @@
+defmodule Octopus.Service.<%= name %> do
+  def call(args) do
+    Octopus.Executors.Cli.call("<%= command %>", args)
+  end
+end
