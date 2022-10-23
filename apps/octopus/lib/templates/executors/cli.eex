@@ -1,5 +1,9 @@
 defmodule Octopus.Service.<%= name %> do
-  def call(args) do
-    Octopus.Executors.Cli.call("<%= command %>", args)
-  end
+
+
+  <%= for {name, attrs} <- interface do %>
+    def <%= name %>(args) do
+      Octopus.Executors.Cli.call("<%= command %>", args, "<%= Base.encode64(:erlang.term_to_binary(attrs)) %>")
+    end
+  <% end %>
 end

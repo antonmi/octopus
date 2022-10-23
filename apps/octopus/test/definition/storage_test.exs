@@ -9,13 +9,13 @@ defmodule Octopus.Definition.StorageTest do
     request: %{
       method: "POST",
       path: "/services/ipcalc",
-      payload: :text #json #number
+      # json #number
+      payload: :text
     }
   }
 
   test "add and get" do
     Storage.add(@cli_definition)
     assert Storage.get("ipcalc") == @cli_definition
-    assert Storage.get_by_request_path("/services/ipcalc") == @cli_definition
   end
 end

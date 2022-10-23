@@ -7,10 +7,24 @@ defmodule Octopus.DefinitionTest do
     type: "cli",
     name: "ipcalc",
     command: "/usr/local/bin/ipcalc",
-    request: %{
-#      method: "POST", #let this to be default
-      path: "/services/ipcalc",
-      payload: :text #json #number
+    interface: %{
+      for_ip: %{
+        input: %{
+          args: %{ip: nil},
+          transform: ":ip"
+        },
+        # json
+        output: :binary
+      },
+      for_ip_with_mask: %{
+        input: %{
+          args: %{
+            ip: nil,
+            mask: nil
+          },
+          transform: ":ip/:mask"
+        }
+      }
     }
   }
 
@@ -45,10 +59,15 @@ defmodule Octopus.DefinitionTest do
 
   test "cli definition" do
     {:ok, code} = Definition.define(@cli_definition)
-    assert String.starts_with?(code, "defmodule Octopus.Service.Ipcalc")
-    assert {:ok, string} = Octopus.Service.Ipcalc.call("192.168.0.1")
+
+    {:ok, string} = Octopus.Service.Ipcalc.for_ip(%{ip: "192.168.0.1"})
     assert String.contains?(string, "Address:   192.168.0.1")
-    assert Storage.get("ipcalc") == @cli_definition
+
+    {:ok, string} = Octopus.Service.Ipcalc.for_ip(%{"ip" => "192.168.0.1"})
+    assert String.contains?(string, "Address:   192.168.0.1")
+
+    {:ok, string} = Octopus.Service.Ipcalc.for_ip_with_mask(%{ip: "192.168.0.1", mask: "24"})
+    assert String.contains?(string, "Address:   192.168.0.1")
   end
 
   test "json_api definition" do

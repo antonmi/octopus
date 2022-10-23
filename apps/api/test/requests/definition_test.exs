@@ -6,9 +6,24 @@ defmodule Api.Requests.DefinitionTest do
     type: "cli",
     name: "ipcalc",
     command: "/usr/local/bin/ipcalc",
-    request: %{
-      path: "/services/ipcalc",
-      payload: :text
+    interface: %{
+      for_ip: %{
+        input: %{
+          args: %{ip: nil},
+          transform: ":ip"
+        },
+        # json
+        output: :binary
+      },
+      for_ip_with_mask: %{
+        input: %{
+          args: %{
+            ip: nil,
+            mask: nil
+          },
+          transform: ":ip/:mask"
+        }
+      }
     }
   }
 
@@ -21,12 +36,12 @@ defmodule Api.Requests.DefinitionTest do
     data = Jason.decode!(conn.resp_body)
     assert data["code"]
 
-    assert {:ok, string} = Octopus.Service.Ipcalc.call("192.168.0.1")
+    {:ok, string} = Octopus.Service.Ipcalc.for_ip(%{ip: "192.168.0.1"})
     assert String.contains?(string, "Address:   192.168.0.1")
 
     conn =
       :post
-      |> conn("/services/ipcalc", "192.168.0.1")
+      |> conn("/services/ipcalc/for_ip", %{ip: "192.168.0.1"})
       |> Api.Router.call(%{})
 
     assert String.contains?(conn.resp_body, "Address:   192.168.0.1")

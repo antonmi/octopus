@@ -1,10 +1,11 @@
 defmodule Octopus.ApiEval do
-
   alias Octopus.Definition.Storage
 
-  def eval(path, payload) do
-    definition = Storage.get_by_request_path(path)
-    apply(module_name(definition[:name]), :call, [payload])
+  def eval(name, function, args) do
+    definition = Storage.get(name)
+    module = module_name(definition[:name])
+    function = String.to_atom(function)
+    apply(module, function, [args])
   end
 
   defp module_name(name) do

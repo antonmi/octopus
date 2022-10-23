@@ -33,10 +33,8 @@ defmodule Api.Router do
     end
   end
 
-  post "services/:name" do
-    {:ok, body, conn} = read_body(conn)
-
-    case Eval.eval(conn.request_path, body) do
+  post "services/:name/:function" do
+    case Eval.eval(conn.params["name"], conn.params["function"], conn.body_params) do
       {:ok, result} ->
         send_resp(conn, 200, result)
     end
