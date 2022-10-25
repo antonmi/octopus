@@ -3,15 +3,9 @@ defmodule Octopus.Definition.StorageTest do
   alias Octopus.Definition.Storage
 
   @cli_definition %{
-    type: "cli",
+    type: "command",
     name: "ipcalc",
-    command: "/usr/local/bin/ipcalc",
-    request: %{
-      method: "POST",
-      path: "/services/ipcalc",
-      # json #number
-      payload: :text
-    }
+    command: "/usr/local/bin/ipcalc"
   }
 
   test "add and get" do

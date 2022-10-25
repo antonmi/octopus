@@ -1,10 +1,10 @@
 defmodule Octopus.Definition do
   alias Octopus.Definition.Storage
 
-  def define(%{type: "cli", name: name, command: command, interface: interface} = definition) do
+  def define(%{type: "command", name: name, command: command, interface: interface} = definition) do
     name = Macro.camelize(name)
 
-    "cli.eex"
+    "command.eex"
     |> template()
     |> EEx.eval_file(name: name, command: command, interface: interface)
     |> eval_code()

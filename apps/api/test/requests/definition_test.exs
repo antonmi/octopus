@@ -3,7 +3,7 @@ defmodule Api.Requests.DefinitionTest do
   use Plug.Test
 
   @cli_definition %{
-    type: "cli",
+    type: "command",
     name: "ipcalc",
     command: "/usr/local/bin/ipcalc",
     interface: %{
@@ -12,7 +12,6 @@ defmodule Api.Requests.DefinitionTest do
           args: %{ip: nil},
           transform: ":ip"
         },
-        # json
         output: :binary
       },
       for_ip_with_mask: %{
@@ -27,7 +26,7 @@ defmodule Api.Requests.DefinitionTest do
     }
   }
 
-  test "cli definition with eval" do
+  test "command definition with eval" do
     conn =
       :post
       |> conn("/define", @cli_definition)
@@ -42,6 +41,13 @@ defmodule Api.Requests.DefinitionTest do
     conn =
       :post
       |> conn("/services/ipcalc/for_ip", %{ip: "192.168.0.1"})
+      |> Api.Router.call(%{})
+
+    assert String.contains?(conn.resp_body, "Address:   192.168.0.1")
+
+    conn =
+      :post
+      |> conn("/services/ipcalc/for_ip_with_mask", %{ip: "192.168.0.1", mask: "24"})
       |> Api.Router.call(%{})
 
     assert String.contains?(conn.resp_body, "Address:   192.168.0.1")

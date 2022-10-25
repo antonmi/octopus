@@ -4,7 +4,7 @@ defmodule Octopus.DefinitionTest do
   alias Octopus.Definition.Storage
 
   @cli_definition %{
-    type: "cli",
+    type: "command",
     name: "ipcalc",
     command: "/usr/local/bin/ipcalc",
     interface: %{
@@ -57,7 +57,7 @@ defmodule Octopus.DefinitionTest do
     """
   }
 
-  test "cli definition" do
+  test "command definition" do
     {:ok, code} = Definition.define(@cli_definition)
 
     {:ok, string} = Octopus.Service.Ipcalc.for_ip(%{ip: "192.168.0.1"})
