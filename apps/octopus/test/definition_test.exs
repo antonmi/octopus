@@ -3,7 +3,7 @@ defmodule Octopus.DefinitionTest do
   alias Octopus.Definition
   alias Octopus.Definition.Storage
 
-  @cli_definition %{
+  @command_definition %{
     type: "command",
     name: "ipcalc",
     command: "/usr/local/bin/ipcalc",
@@ -58,12 +58,9 @@ defmodule Octopus.DefinitionTest do
   }
 
   test "command definition" do
-    {:ok, code} = Definition.define(@cli_definition)
+    {:ok, code} = Definition.define(@command_definition)
 
     {:ok, string} = Octopus.Service.Ipcalc.for_ip(%{ip: "192.168.0.1"})
-    assert String.contains?(string, "Address:   192.168.0.1")
-
-    {:ok, string} = Octopus.Service.Ipcalc.for_ip(%{"ip" => "192.168.0.1"})
     assert String.contains?(string, "Address:   192.168.0.1")
 
     {:ok, string} = Octopus.Service.Ipcalc.for_ip_with_mask(%{ip: "192.168.0.1", mask: "24"})

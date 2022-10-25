@@ -2,7 +2,7 @@ defmodule Api.Requests.DefinitionTest do
   use ExUnit.Case
   use Plug.Test
 
-  @cli_definition %{
+  @command_definition %{
     type: "command",
     name: "ipcalc",
     command: "/usr/local/bin/ipcalc",
@@ -29,7 +29,7 @@ defmodule Api.Requests.DefinitionTest do
   test "command definition with eval" do
     conn =
       :post
-      |> conn("/define", @cli_definition)
+      |> conn("/define", @command_definition)
       |> Api.Router.call(%{})
 
     data = Jason.decode!(conn.resp_body)
