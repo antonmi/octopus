@@ -20,7 +20,7 @@ defmodule Octopus.Definition.Storage do
   end
 
   def handle_call({:add, definition}, _from, state) do
-    name = definition[:name]
+    name = definition["name"]
     state = %{state | definitions: Map.put(state.definitions, name, definition)}
     {:reply, definition, state}
   end
