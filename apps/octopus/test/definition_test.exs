@@ -6,9 +6,9 @@ defmodule Octopus.DefinitionTest do
   @command_definition %{
     type: "command",
     name: "ipcalc",
-    command: "/usr/local/bin/ipcalc",
     interface: %{
       for_ip: %{
+        command: "/usr/local/bin/ipcalc",
         input: %{
           args: %{ip: nil},
           transform: ":ip"
@@ -17,6 +17,7 @@ defmodule Octopus.DefinitionTest do
         output: :binary
       },
       for_ip_with_mask: %{
+        command: "/usr/local/bin/ipcalc",
         input: %{
           args: %{
             ip: nil,

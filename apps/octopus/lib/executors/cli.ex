@@ -1,4 +1,4 @@
-defmodule Octopus.Executors.Cli do
+defmodule Octopus.Executors.Command do
   def call(command, args, config) do
     config = :erlang.binary_to_term(Base.decode64!(config))
 
