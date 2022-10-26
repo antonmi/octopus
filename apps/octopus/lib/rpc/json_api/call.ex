@@ -1,4 +1,4 @@
-defmodule Octopus.Rpc.JsonApi.Client do
+defmodule Octopus.Rpc.JsonApi.Call do
   def call(params, config) do
     url = build_url(config["url"], params)
     method = parse_method(config["method"])

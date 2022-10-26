@@ -1,5 +1,5 @@
 defmodule Octopus.Rpc.JsonApi do
-  alias Octopus.Rpc.JsonApi.{InputAdapter, Client, OutputAdapter}
+  alias Octopus.Rpc.JsonApi.{Input, Call, Output}
 
   def define(definition) do
     name = Macro.camelize(definition["name"])
@@ -16,9 +16,9 @@ defmodule Octopus.Rpc.JsonApi do
   def call(args, config) do
     config = :erlang.binary_to_term(Base.decode64!(config))
 
-    with {:ok, input} <- InputAdapter.call(args, config["input"]),
-         {:ok, body} <- Client.call(input, config["call"]),
-         {:ok, formatted_output} <- OutputAdapter.call(body, config["output"]) do
+    with {:ok, input} <- Input.call(args, config["input"]),
+         {:ok, body} <- Call.call(input, config["call"]),
+         {:ok, formatted_output} <- Output.call(body, config["output"]) do
       {:ok, formatted_output}
     end
   end

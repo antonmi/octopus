@@ -1,4 +1,4 @@
-defmodule Octopus.Rpc.UnixCommand.Client do
+defmodule Octopus.Rpc.UnixCommand.Call do
   def call(input, config) do
     command = config["command"]
     {:ok, %Rambo{err: err, out: out, status: status}} = Rambo.run(command, input)

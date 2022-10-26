@@ -1,4 +1,4 @@
-defmodule Octopus.Rpc.UnixCommand.InputAdapter do
+defmodule Octopus.Rpc.UnixCommand.Input do
   def call(args, %{"transform" => transform, "args" => args_config}) when is_binary(transform) do
     case validate_args(args, args_config) do
       {:ok, args} ->
