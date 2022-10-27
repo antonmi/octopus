@@ -1,4 +1,4 @@
-defmodule Octopus.Definition.Storage do
+defmodule Octopus.Service.Storage do
   use GenServer
 
   defstruct definitions: Map.new()

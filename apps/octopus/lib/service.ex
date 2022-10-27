@@ -1,8 +1,9 @@
 defmodule Octopus.Service do
-  alias Octopus.Definition.Storage
+  alias Octopus.Service.Storage
 
   @types %{
-    "unix_command" => Octopus.Rpc.UnixCommand
+    "unix_command" => Octopus.Rpc.UnixCommand,
+    "json_api" => Octopus.Rpc.JsonApi
   }
 
   def define(definition) do

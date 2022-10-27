@@ -5,8 +5,7 @@ defmodule Octopus.Application do
 
   def start(_type, _args) do
     children = [
-      #      {DynamicSupervisor, strategy: :one_for_one, name: Octopus.ServiceSupervisor},
-      {Octopus.Definition.Storage, []},
+      {Octopus.Service.Storage, []},
       {Finch, name: Octopus.Finch}
     ]
 

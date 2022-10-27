@@ -27,18 +27,22 @@ defmodule Api.Router do
   end
 
   post "/define" do
-    case Definition.define(conn.params) do
+    case Octopus.Service.define(conn.params) do
       {:ok, code} ->
         send_resp(conn, 200, Jason.encode!(%{code: code}))
     end
   end
 
   post "services/:name/:function" do
-    case Eval.eval(conn.params["name"], conn.params["function"], conn.body_params) do
+    case Octopus.Service.call(conn.params["name"], conn.params["function"], conn.body_params)
+         |> IO.inspect() do
       {:ok, result} ->
-        send_resp(conn, 200, result)
+        send_resp(conn, 200, maybe_encode(result))
     end
   end
+
+  defp maybe_encode(result) when is_map(result), do: Jason.encode!(result)
+  defp maybe_encode(result) when is_binary(result), do: result
 
   match _ do
     send_resp(conn, 404, "NOT FOUND")

@@ -1,6 +1,7 @@
 defmodule Octopus.ServiceTest do
   use ExUnit.Case
   alias Octopus.Service
+  alias Octopus.Service.Storage
   alias Octopus.Test.Definitions
 
   describe "define" do
@@ -8,13 +9,23 @@ defmodule Octopus.ServiceTest do
       definition = Definitions.unix_command()
       {:ok, _code} = Service.define(definition)
 
+      assert Storage.get("ipcalc") == definition
+
       {:ok, string} = Octopus.Service.Ipcalc.for_ip(%{"ip" => "192.168.0.1"})
       assert String.contains?(string, "Address:   192.168.0.1")
 
-      assert Octopus.Definition.Storage.get("ipcalc") == definition
-
       {:ok, string} = Service.call("ipcalc", "for_ip", %{"ip" => "192.168.0.1"})
       assert String.contains?(string, "Address:   192.168.0.1")
+    end
+
+    test "define json_api and call it" do
+      definition = Definitions.json_api()
+      {:ok, _code} = Service.define(definition)
+
+      assert Storage.get("agify") == definition
+
+      {:ok, map} = Octopus.Service.Agify.age_for_name(%{"name" => "Anton"})
+      assert map["age"] == 55
     end
   end
 end
