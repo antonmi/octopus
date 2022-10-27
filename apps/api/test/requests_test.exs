@@ -55,4 +55,24 @@ defmodule Api.Requests.DefinitionTest do
     result = Jason.decode!(conn.resp_body)
     assert result["age"] == 55
   end
+
+  test "json_server definition with eval" do
+    definition = Definitions.json_server()
+
+    conn =
+      :post
+      |> conn("/define", definition)
+      |> Api.Router.call(%{})
+
+    {:ok, map} = Octopus.Service.JsonServer.post(%{"id" => 1})
+    assert map["id"] == 1
+
+    conn =
+      :post
+      |> conn("/services/json_server/post", %{"id" => 1})
+      |> Api.Router.call(%{})
+
+    result = Jason.decode!(conn.resp_body)
+    assert map["id"] == 1
+  end
 end

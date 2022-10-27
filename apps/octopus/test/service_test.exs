@@ -27,5 +27,16 @@ defmodule Octopus.ServiceTest do
       {:ok, map} = Octopus.Service.Agify.age_for_name(%{"name" => "Anton"})
       assert map["age"] == 55
     end
+
+    test "define json_server and call" do
+      definition = Definitions.json_server()
+      {:ok, _code} = Service.define(definition)
+
+      {:ok, list} = Octopus.Service.JsonServer.posts(%{})
+      assert length(list) > 0
+
+      {:ok, map} = Octopus.Service.JsonServer.post(%{"id" => 1})
+      assert map["id"] == 1
+    end
   end
 end

@@ -1,16 +1,10 @@
 defmodule Octopus.Rpc.UnixCommand.Input do
+  alias Octopus.Utils
+
   def call(args, %{"transform" => transform, "args" => args_config}) when is_binary(transform) do
     case validate_args(args, args_config) do
       {:ok, args} ->
-        input =
-          ~r{:(\w+\b)}
-          |> Regex.scan(transform)
-          |> Enum.reduce(transform, fn [colon_arg, arg], acc ->
-            value = Map.fetch!(args, arg)
-            String.replace(acc, colon_arg, value)
-          end)
-
-        {:ok, input}
+        {:ok, Utils.eval_pattern(transform, args)}
 
       {:error, :invalid_arguments} ->
         {:error, :invalid_arguments}

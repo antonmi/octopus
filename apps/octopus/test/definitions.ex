@@ -7,14 +7,14 @@ defmodule Octopus.Test.Definitions do
         "for_ip" => %{
           "call" => %{
             "command" => "/usr/local/bin/ipcalc",
-            # call opts
             "opts" => %{}
           },
           "input" => %{
-            "args" => %{"ip" => nil},
+            "args" => %{
+              "ip" => nil
+            },
             "transform" => ":ip"
           },
-          # json
           "output" => "binary"
         },
         "for_ip_with_mask" => %{
@@ -41,7 +41,8 @@ defmodule Octopus.Test.Definitions do
       "interface" => %{
         "age_for_name" => %{
           "call" => %{
-            "url" => "https://api.agify.io/",
+            "url" => "https://api.agify.io",
+            "path" => "/",
             "method" => "GET"
           },
           "input" => %{
@@ -55,19 +56,46 @@ defmodule Octopus.Test.Definitions do
     }
   end
 
-  def json_api do
+  def json_server do
     %{
       "type" => "json_api",
-      "name" => "agify",
+      "name" => "json_server",
+      "run" => %{
+        "type" => "process",
+        "start" => %{
+          "command" => "node",
+          "args" => [
+            "/Users/anton.mishchukkloeckner.com/.asdf/installs/nodejs/16.2.0/.npm/bin/json-server",
+            "-w",
+            "db.json"
+          ]
+        },
+        "ping" =>
+          %{
+            # TODO
+          }
+      },
       "interface" => %{
-        "age_for_name" => %{
+        "posts" => %{
           "call" => %{
-            "url" => "https://api.agify.io/",
+            "url" => "http://localhost:3000",
+            "path" => "/posts",
+            "method" => "GET"
+          },
+          "input" => %{
+            "args" => %{}
+          },
+          "output" => "map"
+        },
+        "post" => %{
+          "call" => %{
+            "url" => "http://localhost:3000",
+            "path" => "/posts/:id",
             "method" => "GET"
           },
           "input" => %{
             "args" => %{
-              "name" => nil
+              "id" => nil
             }
           },
           "output" => "map"
@@ -75,4 +103,40 @@ defmodule Octopus.Test.Definitions do
       }
     }
   end
+
+  #  def local_process do
+  #    %{
+  #      "type" => "code",
+  #      "name" => "json_server",
+  #      "run" => %{
+  #        "command": "node /Users/anton.mishchukkloeckner.com/.asdf/installs/nodejs/16.2.0/.npm/bin/json-server -w db.json"
+  #      },
+  #      "interface" => %{
+  #        "posts" => %{
+  #          "call" => %{
+  #            "url" => "http://localhost:3000/",
+  #            "path" => "posts",
+  #            "method" => "GET"
+  #          },
+  #          "input" => %{
+  #            "args" => %{}
+  #          },
+  #          "output" => "map"
+  #        },
+  #        "post" => %{
+  #          "call" => %{
+  #            "url" => "http://localhost:3000",
+  #            "path" => "posts/:id",
+  #            "method" => "GET"
+  #          },
+  #          "input" => %{
+  #            "args" => %{
+  #              "id" => nil
+  #            }
+  #          },
+  #          "output" => "map"
+  #        }
+  #      }
+  #    }
+  #  end
 end
