@@ -1,4 +1,4 @@
-defmodule Octopus.Rpc.JsonApi.Input do
+defmodule Octopus.Interface.JsonApi.Input do
   def call(args, %{"args" => args_config}) do
     case validate_args(args, args_config) do
       {:ok, args} ->

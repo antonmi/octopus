@@ -1,5 +1,5 @@
-defmodule Octopus.Rpc.JsonApi do
-  use Octopus.Rpc,
+defmodule Octopus.Interface.JsonApi do
+  use Octopus.Interface,
     input: __MODULE__.Input,
     call: __MODULE__.Call,
     output: __MODULE__.Output

@@ -1,4 +1,4 @@
-defmodule Octopus.Rpc.UnixCommand.Output do
+defmodule Octopus.Interface.UnixCommand.Output do
   def call(output, "binary") do
     {:ok, output}
   end

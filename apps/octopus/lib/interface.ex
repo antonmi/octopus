@@ -1,4 +1,4 @@
-defmodule Octopus.Rpc do
+defmodule Octopus.Interface do
   defmacro __using__(opts) do
     quote do
       @input Keyword.get(unquote(opts), :input)
@@ -7,12 +7,12 @@ defmodule Octopus.Rpc do
 
       def define(definition) do
         service_name = Macro.camelize(definition["name"])
-        rpc_module_name = Macro.camelize(definition["type"])
+        interface_module_name = Macro.camelize(definition["type"])
 
         template()
         |> EEx.eval_file(
           service_name: service_name,
-          rpc_module_name: rpc_module_name,
+          interface_module_name: interface_module_name,
           interface: definition["interface"]
         )
         |> eval_code()

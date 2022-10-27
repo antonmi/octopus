@@ -1,4 +1,4 @@
-defmodule Octopus.Rpc.JsonApi.Call do
+defmodule Octopus.Interface.JsonApi.Call do
   alias Octopus.Utils
 
   def call(params, config) do

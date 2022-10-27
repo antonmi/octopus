@@ -1,6 +1,6 @@
-defmodule Octopus.Rpc.JsonApiTest do
+defmodule Octopus.Interface.JsonApiTest do
   use ExUnit.Case
-  alias Octopus.Rpc.JsonApi
+  alias Octopus.Interface.JsonApi
 
   describe "json_api payload" do
     test "define and call" do

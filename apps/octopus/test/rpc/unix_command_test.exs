@@ -1,6 +1,6 @@
-defmodule Octopus.Rpc.UnixCommandTest do
+defmodule Octopus.Interface.UnixCommandTest do
   use ExUnit.Case
-  alias Octopus.Rpc.UnixCommand
+  alias Octopus.Interface.UnixCommand
 
   describe "define/2" do
     test "define" do

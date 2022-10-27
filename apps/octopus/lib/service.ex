@@ -2,8 +2,8 @@ defmodule Octopus.Service do
   alias Octopus.Service.Storage
 
   @types %{
-    "unix_command" => Octopus.Rpc.UnixCommand,
-    "json_api" => Octopus.Rpc.JsonApi
+    "unix_command" => Octopus.Interface.UnixCommand,
+    "json_api" => Octopus.Interface.JsonApi
   }
 
   @execution_types %{
