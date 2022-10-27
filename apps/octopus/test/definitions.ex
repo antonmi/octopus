@@ -60,7 +60,7 @@ defmodule Octopus.Test.Definitions do
     %{
       "type" => "json_api",
       "name" => "json_server",
-      "run" => %{
+      "execution" => %{
         "type" => "process",
         "start" => %{
           "command" => "node",
@@ -104,39 +104,4 @@ defmodule Octopus.Test.Definitions do
     }
   end
 
-  #  def local_process do
-  #    %{
-  #      "type" => "code",
-  #      "name" => "json_server",
-  #      "run" => %{
-  #        "command": "node /Users/anton.mishchukkloeckner.com/.asdf/installs/nodejs/16.2.0/.npm/bin/json-server -w db.json"
-  #      },
-  #      "interface" => %{
-  #        "posts" => %{
-  #          "call" => %{
-  #            "url" => "http://localhost:3000/",
-  #            "path" => "posts",
-  #            "method" => "GET"
-  #          },
-  #          "input" => %{
-  #            "args" => %{}
-  #          },
-  #          "output" => "map"
-  #        },
-  #        "post" => %{
-  #          "call" => %{
-  #            "url" => "http://localhost:3000",
-  #            "path" => "posts/:id",
-  #            "method" => "GET"
-  #          },
-  #          "input" => %{
-  #            "args" => %{
-  #              "id" => nil
-  #            }
-  #          },
-  #          "output" => "map"
-  #        }
-  #      }
-  #    }
-  #  end
 end
