@@ -2,7 +2,6 @@ defmodule Api.Router do
   use Plug.Router
 
   alias Api.Definition
-  alias Api.Eval
 
   plug(Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
@@ -34,8 +33,7 @@ defmodule Api.Router do
   end
 
   post "services/:name/:function" do
-    case Octopus.Service.call(conn.params["name"], conn.params["function"], conn.body_params)
-         |> IO.inspect() do
+    case Octopus.Service.call(conn.params["name"], conn.params["function"], conn.body_params) do
       {:ok, result} ->
         send_resp(conn, 200, maybe_encode(result))
     end
