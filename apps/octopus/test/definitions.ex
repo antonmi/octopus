@@ -14,7 +14,11 @@ defmodule Octopus.Test.Definitions do
               "ip" => nil
             },
             "transform" => ":ip"
+            # actually here can be EEx template
+            # "<%= args["ip"] %>"
+            # very powerful!
           },
+          # The same for output
           "output" => "binary"
         },
         "for_ip_with_mask" => %{
@@ -27,8 +31,10 @@ defmodule Octopus.Test.Definitions do
               "mask" => nil
             },
             "transform" => ":ip/:mask"
+            # EEx template!
           },
           "output" => "binary"
+          # EEx template!
         }
       }
     }
@@ -75,7 +81,7 @@ defmodule Octopus.Test.Definitions do
           }
       },
       "interface" => %{
-        "type" => "json_api",
+        "type" => "json_api", # it maps to module Octopus.Interface.JsonApi
         "posts" => %{
           "call" => %{
             "url" => "http://localhost:3000",
