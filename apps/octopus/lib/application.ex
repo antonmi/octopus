@@ -5,7 +5,6 @@ defmodule Octopus.Application do
 
   def start(_type, _args) do
     children = [
-      {Octopus.Service.Storage, []},
       {Finch, name: Octopus.Finch}
     ]
 

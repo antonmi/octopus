@@ -64,7 +64,7 @@ defmodule Octopus.Test.Definitions do
 
   def json_server do
     %{
-      "name" => "json_server",
+      "name" => "json_server.v1",
       "execution" => %{
         "type" => "process",
         "start" => %{

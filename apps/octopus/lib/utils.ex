@@ -7,4 +7,11 @@ defmodule Octopus.Utils do
       String.replace(acc, colon_arg, "#{value}")
     end)
   end
+
+  def modulize(string) do
+    string
+    |> String.split(".")
+    |> Enum.map(&Macro.camelize/1)
+    |> Enum.join(".")
+  end
 end

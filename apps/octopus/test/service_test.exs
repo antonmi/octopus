@@ -9,8 +9,6 @@ defmodule Octopus.ServiceTest do
       definition = Definitions.unix_command()
       {:ok, _code} = Service.define(definition)
 
-      assert Storage.get("ipcalc") == definition
-
       {:ok, string} = Octopus.Service.Ipcalc.for_ip(%{"ip" => "192.168.0.1"})
       assert String.contains?(string, "Address:   192.168.0.1")
 
@@ -22,7 +20,6 @@ defmodule Octopus.ServiceTest do
       definition = Definitions.json_api()
       {:ok, _code} = Service.define(definition)
 
-      assert Storage.get("agify") == definition
 
       {:ok, map} = Octopus.Service.Agify.age_for_name(%{"name" => "Anton"})
       assert map["age"] == 55
@@ -32,10 +29,10 @@ defmodule Octopus.ServiceTest do
       definition = Definitions.json_server()
       {:ok, _code} = Service.define(definition)
 
-      {:ok, list} = Octopus.Service.JsonServer.posts(%{})
+      {:ok, list} = Octopus.Service.JsonServer.V1.posts(%{})
       assert length(list) > 0
 
-      {:ok, map} = Octopus.Service.JsonServer.post(%{"id" => 1})
+      {:ok, map} = Octopus.Service.JsonServer.V1.post(%{"id" => 1})
       assert map["id"] == 1
     end
   end

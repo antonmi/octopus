@@ -41,12 +41,6 @@ defmodule Api.Requests.DefinitionTest do
       |> conn("/define", definition)
       |> Api.Router.call(%{})
 
-    data = Jason.decode!(conn.resp_body)
-    assert data["code"]
-
-    {:ok, map} = Octopus.Service.Agify.age_for_name(%{"name" => "Anton"})
-    assert map["age"] == 55
-
     conn =
       :post
       |> conn("/services/agify/age_for_name", %{"name" => "Anton"})
@@ -64,15 +58,12 @@ defmodule Api.Requests.DefinitionTest do
       |> conn("/define", definition)
       |> Api.Router.call(%{})
 
-    {:ok, map} = Octopus.Service.JsonServer.post(%{"id" => 1})
-    assert map["id"] == 1
-
     conn =
       :post
-      |> conn("/services/json_server/post", %{"id" => 1})
+      |> conn("/services/json_server.v1/post", %{"id" => 1})
       |> Api.Router.call(%{})
 
     result = Jason.decode!(conn.resp_body)
-    assert map["id"] == 1
+    assert result["id"] == 1
   end
 end
