@@ -5,7 +5,7 @@ defmodule Octopus.Execution.Process.Start do
         do_run(command, args)
       end)
 
-    Process.sleep(5_000)
+    Process.sleep(3_000)
 
     {:ok, task}
   end

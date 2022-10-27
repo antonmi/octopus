@@ -1,7 +1,0 @@
-defmodule Octopus.Service.<%= service_name %> do
-  <%= for {name, attrs} <- interface do %>
-    def <%= name %>(args) do
-      Octopus.Interface.<%= interface_module_name %>.call(args, "<%= Base.encode64(:erlang.term_to_binary(attrs)) %>")
-    end
-  <% end %>
-end

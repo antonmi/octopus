@@ -1,9 +1,9 @@
 defmodule Octopus.Test.Definitions do
   def unix_command do
     %{
-      "type" => "unix_command",
       "name" => "ipcalc",
       "interface" => %{
+        "type" => "unix_command",
         "for_ip" => %{
           "call" => %{
             "command" => "/usr/local/bin/ipcalc",
@@ -36,9 +36,9 @@ defmodule Octopus.Test.Definitions do
 
   def json_api do
     %{
-      "type" => "json_api",
       "name" => "agify",
       "interface" => %{
+        "type" => "json_api",
         "age_for_name" => %{
           "call" => %{
             "url" => "https://api.agify.io",
@@ -58,7 +58,6 @@ defmodule Octopus.Test.Definitions do
 
   def json_server do
     %{
-      "type" => "json_api",
       "name" => "json_server",
       "execution" => %{
         "type" => "process",
@@ -76,6 +75,7 @@ defmodule Octopus.Test.Definitions do
           }
       },
       "interface" => %{
+        "type" => "json_api",
         "posts" => %{
           "call" => %{
             "url" => "http://localhost:3000",

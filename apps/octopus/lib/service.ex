@@ -1,7 +1,7 @@
 defmodule Octopus.Service do
   alias Octopus.Service.Storage
 
-  @types %{
+  @interface_types %{
     "unix_command" => Octopus.Interface.UnixCommand,
     "json_api" => Octopus.Interface.JsonApi
   }
@@ -11,9 +11,10 @@ defmodule Octopus.Service do
   }
 
   def define(definition) do
-    module = Map.fetch!(@types, definition["type"])
+    interface_definition = definition["interface"]
+    module = Map.fetch!(@interface_types, interface_definition["type"])
 
-    with {:ok, code} <- apply(module, :define, [definition]),
+    with {:ok, code} <- apply(module, :define, [definition["name"], interface_definition]),
          {:ok, _result} <- run_service(definition["execution"]) do
       Storage.add(definition)
       {:ok, code}

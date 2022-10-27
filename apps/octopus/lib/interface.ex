@@ -5,15 +5,15 @@ defmodule Octopus.Interface do
       @call Keyword.get(unquote(opts), :call)
       @output Keyword.get(unquote(opts), :output)
 
-      def define(definition) do
-        service_name = Macro.camelize(definition["name"])
-        interface_module_name = Macro.camelize(definition["type"])
+      def define(service_name, interface_definition) do
+        service_name = Macro.camelize(service_name)
+        interface_module_name = Macro.camelize(interface_definition["type"])
 
         template()
-        |> EEx.eval_file(
+        |> EEx.eval_string(
           service_name: service_name,
           interface_module_name: interface_module_name,
-          interface: definition["interface"]
+          interface: interface_definition
         )
         |> eval_code()
         |> case do
@@ -33,10 +33,15 @@ defmodule Octopus.Interface do
       end
 
       defp template() do
-        "../.."
-        |> Path.expand(__ENV__.file)
-        |> Path.join("service")
-        |> Path.join("template.eex")
+        """
+        defmodule Octopus.Service.<%= service_name %> do
+          <%= for {name, attrs} <- interface do %>
+            def <%= name %>(args) do
+              Octopus.Interface.<%= interface_module_name %>.call(args, "<%= Base.encode64(:erlang.term_to_binary(attrs)) %>")
+            end
+          <% end %>
+        end
+        """
       end
 
       defp eval_code(code) do

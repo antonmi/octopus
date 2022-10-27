@@ -5,7 +5,7 @@ defmodule Octopus.Interface.UnixCommandTest do
   describe "define/2" do
     test "define" do
       definition = Octopus.Test.Definitions.unix_command()
-      {:ok, _code} = UnixCommand.define(definition)
+      {:ok, _code} = UnixCommand.define(definition["name"], definition["interface"])
 
       {:ok, string} = Octopus.Service.Ipcalc.for_ip(%{"ip" => "192.168.0.1"})
       assert String.contains?(string, "Address:   192.168.0.1")
