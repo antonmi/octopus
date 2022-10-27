@@ -2,10 +2,15 @@ defmodule Octopus.Rpc.JsonApi do
   alias Octopus.Rpc.JsonApi.{Input, Call, Output}
 
   def define(definition) do
-    name = Macro.camelize(definition["name"])
+    service_name = Macro.camelize(definition["name"])
+    rpc_module_name = Macro.camelize(definition["type"])
 
     template()
-    |> EEx.eval_file(name: name, interface: definition["interface"])
+    |> EEx.eval_file(
+      service_name: service_name,
+      rpc_module_name: rpc_module_name,
+      interface: definition["interface"]
+    )
     |> eval_code()
     |> case do
       {:ok, code} ->
@@ -24,9 +29,9 @@ defmodule Octopus.Rpc.JsonApi do
   end
 
   defp template() do
-    ".."
+    "../.."
     |> Path.expand(__ENV__.file)
-    |> Path.join("json_api")
+    |> Path.join("service")
     |> Path.join("template.eex")
   end
 

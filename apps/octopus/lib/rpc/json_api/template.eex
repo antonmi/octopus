@@ -1,7 +1,0 @@
-defmodule Octopus.Service.<%= name %> do
-  <%= for {name, attrs} <- interface do %>
-    def <%= name %>(args) do
-      Octopus.Rpc.JsonApi.call(args, "<%= Base.encode64(:erlang.term_to_binary(attrs)) %>")
-    end
-  <% end %>
-end
