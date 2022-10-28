@@ -1,0 +1,42 @@
+{
+  "name": "json_server.v1",
+  "execution": {
+    "ping": {},
+    "start": {
+      "args": [
+        "/Users/anton.mishchukkloeckner.com/.asdf/installs/nodejs/16.2.0/.npm/bin/json-server",
+        "-w",
+        "db.json"
+      ],
+      "command": "node"
+    },
+    "type": "process"
+  },
+  "interface": {
+    "post": {
+      "call": {
+        "method": "GET",
+        "path": "/posts/:id",
+        "url": "http://localhost:3000"
+      },
+      "input": {
+        "args": {
+          "id": null
+        }
+      },
+      "output": "map"
+    },
+    "posts": {
+      "call": {
+        "method": "GET",
+        "path": "/posts",
+        "url": "http://localhost:3000"
+      },
+      "input": {
+        "args": {}
+      },
+      "output": "map"
+    },
+    "type": "json_api"
+  }
+}

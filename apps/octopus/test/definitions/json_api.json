@@ -1,0 +1,19 @@
+{
+  "name": "agify",
+  "interface": {
+    "type": "json_api",
+    "age_for_name": {
+      "call": {
+        "method": "GET",
+        "path": "/",
+        "url": "https://api.agify.io"
+      },
+      "input": {
+        "args": {
+          "name": null
+        }
+      },
+      "output": "map"
+    }
+  }
+}

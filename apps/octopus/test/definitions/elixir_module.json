@@ -1,0 +1,45 @@
+{
+  "execution": {
+    "start": {
+      "code": "  defmodule TheModule do\n    def hello(name) do\n      \"Hello #{name}\"\n    end\n\n    def add(x, y), do: x + y\n  end\n"
+    },
+    "type": "compile"
+  },
+  "interface": {
+    "add": {
+      "call": {
+        "function": "add",
+        "module": "TheModule"
+      },
+      "input": {
+        "args": {
+          "x": null,
+          "y": null
+        },
+        "transform": {
+          "eval": true,
+          "template": "[<%= args[\"x\"] %>, <%= args[\"y\"] %>]"
+        }
+      },
+      "output": "as_is"
+    },
+    "hello": {
+      "call": {
+        "function": "hello",
+        "module": "TheModule"
+      },
+      "input": {
+        "args": {
+          "name": null
+        },
+        "transform": {
+          "eval": false,
+          "template": "<%= args[\"name\"] %>"
+        }
+      },
+      "output": "as_is"
+    },
+    "type": "code"
+  },
+  "name": "my_module"
+}

@@ -1,0 +1,32 @@
+{
+  "name": "ipcalc",
+  "interface": {
+    "type": "cli",
+    "for_ip": {
+      "call": {
+        "command": "/usr/local/bin/ipcalc",
+        "opts": {}
+      },
+      "input": {
+        "args": {
+          "ip": null
+        },
+        "transform": ":ip"
+      },
+      "output": "binary"
+    },
+    "for_ip_with_mask": {
+      "call": {
+        "command": "/usr/local/bin/ipcalc"
+      },
+      "input": {
+        "args": {
+          "ip": null,
+          "mask": null
+        },
+        "transform": ":ip/:mask"
+      },
+      "output": "binary"
+    }
+  }
+}

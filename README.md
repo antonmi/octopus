@@ -44,7 +44,7 @@ Consider the following specification:
 }
 ```
 
-Other examples of definitions can be found here: [definitions](apps/octopus/test/definitions.ex)
+Other examples of definitions can be found here: [definitions](apps/octopus/test/definitions)
 
 The specification declares the interface for communication with the "agify" service.
 
@@ -107,6 +107,6 @@ For example:
 }
 ```
 
-See [definitions](apps/octopus/test/definitions.ex).
+See [definitions](apps/octopus/test/definitions).
 
 
