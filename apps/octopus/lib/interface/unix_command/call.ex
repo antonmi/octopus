@@ -1,4 +1,4 @@
-defmodule Octopus.Interface.UnixCommand.Call do
+defmodule Octopus.Interface.Cli.Call do
   def call(input, config) do
     command = config["command"]
 

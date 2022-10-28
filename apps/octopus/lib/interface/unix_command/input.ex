@@ -1,4 +1,4 @@
-defmodule Octopus.Interface.UnixCommand.Input do
+defmodule Octopus.Interface.Cli.Input do
   alias Octopus.Utils
 
   def call(args, %{"transform" => transform, "args" => args_config}) when is_binary(transform) do

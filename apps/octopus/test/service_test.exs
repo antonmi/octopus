@@ -5,8 +5,8 @@ defmodule Octopus.ServiceTest do
   alias Octopus.Test.Definitions
 
   describe "define" do
-    test "define unix_command and call it" do
-      definition = Definitions.unix_command()
+    test "define cli and call it" do
+      definition = Definitions.cli()
       {:ok, _code} = Service.define(definition)
 
       {:ok, string} = Octopus.Service.Ipcalc.for_ip(%{"ip" => "192.168.0.1"})

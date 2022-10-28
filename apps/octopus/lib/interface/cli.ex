@@ -1,4 +1,4 @@
-defmodule Octopus.Interface.UnixCommand do
+defmodule Octopus.Interface.Cli do
   use Octopus.Interface,
     input: __MODULE__.Input,
     call: __MODULE__.Call,

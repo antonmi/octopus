@@ -1,9 +1,9 @@
 defmodule Octopus.Test.Definitions do
-  def unix_command do
+  def cli do
     %{
       "name" => "ipcalc",
       "interface" => %{
-        "type" => "unix_command",
+        "type" => "cli",
         "for_ip" => %{
           "call" => %{
             "command" => "/usr/local/bin/ipcalc",

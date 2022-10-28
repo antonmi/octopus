@@ -4,8 +4,8 @@ defmodule Api.Requests.DefinitionTest do
 
   alias Octopus.Test.Definitions
 
-  test "unix_command definition with eval" do
-    definition = Definitions.unix_command()
+  test "cli definition with eval" do
+    definition = Definitions.cli()
 
     conn =
       :post
