@@ -95,10 +95,10 @@ For example:
 
 ```json
 {
-  "name" => "json_server.v1",
-  "execution": %{
+  "name": "json_server.v1",
+  "execution": {
     "type": "process",
-    "start": %{
+    "start": {
       "command": "json-server",
       "args": ["-w", "db.json"]
     },
