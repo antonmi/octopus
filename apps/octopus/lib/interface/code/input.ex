@@ -1,8 +1,12 @@
 defmodule Octopus.Interface.Code.Input do
   alias Octopus.Utils
 
-  def call(args, %{"transform" => %{"template" => template, "eval" => eval}, "args" => args_config}) do
+  def call(args, %{
+        "transform" => %{"template" => template, "eval" => eval},
+        "args" => args_config
+      }) do
     evaluated_template = EEx.eval_string(template, args: args)
+
     if eval do
       eval_code(evaluated_template)
     else

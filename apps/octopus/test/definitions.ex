@@ -1,4 +1,8 @@
 defmodule Octopus.Test.Definitions do
+  def to_json(definition) do
+    IO.puts(Jason.encode!(definition))
+  end
+
   def cli do
     %{
       "name" => "ipcalc",

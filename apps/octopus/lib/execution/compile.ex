@@ -5,4 +5,3 @@ defmodule Octopus.Execution.Compile do
     __MODULE__.Start.call(args["start"])
   end
 end
-
