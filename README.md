@@ -96,11 +96,11 @@ For example:
 ```json
 {
   "name" => "json_server.v1",
-  "execution" => %{
-    "type" => "process",
-    "start" => %{
-      "command" => "json-server",
-      "args" => ["-w", "db.json"]
+  "execution": %{
+    "type": "process",
+    "start": %{
+      "command": "json-server",
+      "args": ["-w", "db.json"]
     },
   },
   "interface": {...}
