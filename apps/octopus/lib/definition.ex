@@ -7,15 +7,15 @@ defmodule Octopus.Definition do
 
     template()
     |> EEx.eval_string(
-         service_name: service_name,
-         interface_module_name: interface_module_name,
-         interface: interface_definition
-       )
+      service_name: service_name,
+      interface_module_name: interface_module_name,
+      interface: interface_definition
+    )
     |> eval_code()
     |> case do
-         {:ok, code} ->
-           {:ok, code}
-       end
+      {:ok, code} ->
+        {:ok, code}
+    end
   end
 
   defp template() do

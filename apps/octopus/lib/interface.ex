@@ -9,8 +9,8 @@ defmodule Octopus.Interface do
         config = :erlang.binary_to_term(Base.decode64!(config))
 
         with {:ok, input} <- @input.call(args, config["input"]),
-             {:ok, body} <- @call.call(input, config["call"]),
-             {:ok, formatted_output} <- @output.call(body, config["output"]) do
+             {:ok, result} <- @call.call(input, config["call"]),
+             {:ok, formatted_output} <- @output.call(result, config["output"]) do
           {:ok, formatted_output}
         end
       end

@@ -20,7 +20,6 @@ defmodule Octopus.ServiceTest do
       definition = Definitions.json_api()
       {:ok, _code} = Service.define(definition)
 
-
       {:ok, map} = Octopus.Service.Agify.age_for_name(%{"name" => "Anton"})
       assert map["age"] == 55
     end
@@ -34,6 +33,17 @@ defmodule Octopus.ServiceTest do
 
       {:ok, map} = Octopus.Service.JsonServer.V1.post(%{"id" => 1})
       assert map["id"] == 1
+    end
+
+    test "define elixir_module and call" do
+      definition = Definitions.elixir_module()
+      {:ok, _code} = Service.define(definition)
+
+      {:ok, greeting} = Octopus.Service.MyModule.hello(%{"name" => "Anton"})
+      assert greeting == "Hello Anton"
+
+      {:ok, result} = Octopus.Service.MyModule.add(%{"x" => 1, "y" => 2})
+      assert result == 3
     end
   end
 end

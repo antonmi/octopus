@@ -4,7 +4,8 @@ defmodule Octopus.Service do
   alias Octopus.Utils
 
   @execution_types %{
-    "process" => Octopus.Execution.Process
+    "process" => Octopus.Execution.Process,
+    "compile" => Octopus.Execution.Compile
   }
 
   def define(definition) do

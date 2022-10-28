@@ -66,4 +66,27 @@ defmodule Api.Requests.DefinitionTest do
     result = Jason.decode!(conn.resp_body)
     assert result["id"] == 1
   end
+
+  test "elixir_module definition with eval" do
+    definition = Definitions.elixir_module()
+
+    conn =
+      :post
+      |> conn("/define", definition)
+      |> Api.Router.call(%{})
+
+    conn =
+      :post
+      |> conn("/services/my_module/hello", %{"name" => "Anton"})
+      |> Api.Router.call(%{})
+
+    assert conn.resp_body == "Hello Anton"
+
+    conn =
+      :post
+      |> conn("/services/my_module/add", %{"x" => 1, "y" => 2})
+      |> Api.Router.call(%{})
+
+    assert conn.resp_body == "3"
+  end
 end

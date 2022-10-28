@@ -11,6 +11,7 @@ defmodule Octopus.Test.Definitions do
           },
           "input" => %{
             "args" => %{
+              # defaults can be here or specific transformation
               "ip" => nil
             },
             "transform" => ":ip"
@@ -26,6 +27,7 @@ defmodule Octopus.Test.Definitions do
             "command" => "/usr/local/bin/ipcalc"
           },
           "input" => %{
+            # it can be just a list "args" => ["ip", "mask"]
             "args" => %{
               "ip" => nil,
               "mask" => nil
@@ -81,7 +83,8 @@ defmodule Octopus.Test.Definitions do
           }
       },
       "interface" => %{
-        "type" => "json_api", # it maps to module Octopus.Interface.JsonApi
+        # it maps to module Octopus.Interface.JsonApi
+        "type" => "json_api",
         "posts" => %{
           "call" => %{
             "url" => "http://localhost:3000",
@@ -110,4 +113,59 @@ defmodule Octopus.Test.Definitions do
     }
   end
 
+  def elixir_module do
+    %{
+      "name" => "my_module",
+      "execution" => %{
+        "type" => "compile",
+        "start" => %{
+          "code" => ~S"""
+            defmodule TheModule do
+              def hello(name) do
+                "Hello #{name}"
+              end
+
+              def add(x, y), do: x + y
+            end
+          """
+        }
+      },
+      "interface" => %{
+        "type" => "code",
+        "hello" => %{
+          "call" => %{
+            "module" => "TheModule",
+            "function" => "hello"
+          },
+          "input" => %{
+            "args" => %{
+              "name" => nil
+            },
+            "transform" => %{
+              "template" => ~S(<%= args["name"] %>),
+              "eval" => false
+            }
+          },
+          "output" => "as_is"
+        },
+        "add" => %{
+          "call" => %{
+            "module" => "TheModule",
+            "function" => "add"
+          },
+          "input" => %{
+            "args" => %{
+              "x" => nil,
+              "y" => nil
+            },
+            "transform" => %{
+              "template" => ~S([<%= args["x"] %>, <%= args["y"] %>]),
+              "eval" => true
+            }
+          },
+          "output" => "as_is"
+        }
+      }
+    }
+  end
 end
