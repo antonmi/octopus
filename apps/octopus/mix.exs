@@ -28,6 +28,7 @@ defmodule OctopusCore.MixProject do
     [
       {:rambo, "0.3.4"},
       {:finch, "~> 0.13"},
+      {:postgrex, "~> 0.16.5"},
       {:jason, "~> 1.4"}
     ]
   end

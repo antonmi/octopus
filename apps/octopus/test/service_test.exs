@@ -45,5 +45,23 @@ defmodule Octopus.ServiceTest do
       {:ok, result} = Octopus.Service.MyModule.add(%{"x" => 1, "y" => 2})
       assert result == 3
     end
+
+    test "define postgres_sql and call" do
+      definition = Definitions.postgres_sql()
+      {:ok, _code} = Service.define(definition)
+
+      Octopus.Service.PostgresSql.drop_users_table(%{})
+
+      {:ok, _result} = Octopus.Service.PostgresSql.create_users_table(%{})
+
+      {:ok, _result} =
+        Octopus.Service.PostgresSql.insert_user(%{"name" => "Anton", "age" => "123"})
+
+      {:ok, result} = Octopus.Service.PostgresSql.list_users(%{})
+      assert length(result[:rows]) > 0
+
+      {:ok, result} = Octopus.Service.PostgresSql.get_user_by_name(%{"name" => "Anton"})
+      assert [_id, "Anton", 123] = hd(result[:rows])
+    end
   end
 end

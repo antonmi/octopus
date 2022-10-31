@@ -36,6 +36,9 @@ defmodule Api.Router do
     case Octopus.Service.call(conn.params["name"], conn.params["function"], conn.body_params) do
       {:ok, result} ->
         send_resp(conn, 200, maybe_encode(result))
+
+      {:error, error} ->
+        send_resp(conn, 500, inspect(error))
     end
   end
 

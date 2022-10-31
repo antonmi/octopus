@@ -89,4 +89,36 @@ defmodule Api.Requests.DefinitionTest do
 
     assert conn.resp_body == "3"
   end
+
+  test "postgres_sql definition with eval" do
+    definition = Definitions.postgres_sql()
+
+    conn =
+      :post
+      |> conn("/define", definition)
+      |> Api.Router.call(%{})
+
+    conn =
+      :post
+      |> conn("/services/postgres_sql/drop_users_table", %{})
+      |> Api.Router.call(%{})
+
+    conn =
+      :post
+      |> conn("/services/postgres_sql/create_users_table", %{})
+      |> Api.Router.call(%{})
+
+    conn =
+      :post
+      |> conn("/services/postgres_sql/insert_user", %{"name" => "Anton", "age" => 123})
+      |> Api.Router.call(%{})
+
+    conn =
+      :post
+      |> conn("/services/postgres_sql/get_user_by_name", %{"name" => "Anton"})
+      |> Api.Router.call(%{})
+
+    result = Jason.decode!(conn.resp_body)
+    assert [[1, "Anton", 123]] = result["rows"]
+  end
 end

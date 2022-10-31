@@ -1,6 +1,7 @@
 {
   "name": "json_server.v1",
   "execution": {
+    "type": "process",
     "ping": {},
     "start": {
       "args": [
@@ -9,8 +10,7 @@
         "db.json"
       ],
       "command": "node"
-    },
-    "type": "process"
+    }
   },
   "interface": {
     "post": {

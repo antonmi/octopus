@@ -1,6 +1,7 @@
 defmodule Octopus.Test.Definitions do
   def read_and_decode(file) do
     path = Path.expand("../definitions", __ENV__.file)
+
     "#{path}/#{file}"
     |> File.read!()
     |> Jason.decode!()
@@ -20,5 +21,9 @@ defmodule Octopus.Test.Definitions do
 
   def elixir_module do
     read_and_decode("elixir_module.json")
+  end
+
+  def postgres_sql do
+    read_and_decode("postgres_sql.json")
   end
 end
