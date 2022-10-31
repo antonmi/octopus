@@ -1,6 +1,7 @@
 # Octopus
 
-## Declarative interface mapping and remote routine execution
+## Declarative interface mapping 
+### (and remote routine execution)
 
 ### Draft MVP, things will change significantly
 
