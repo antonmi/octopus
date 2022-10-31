@@ -16,7 +16,7 @@
     "post": {
       "call": {
         "method": "GET",
-        "path": "/posts/:id",
+        "path": "/posts/<%= args[\"id\"] %>",
         "url": "http://localhost:3000"
       },
       "input": {

@@ -11,7 +11,10 @@
         "args": {
           "ip": null
         },
-        "transform": ":ip"
+        "transform": {
+          "eval": false,
+          "template": "<%= args[\"ip\"] %>"
+        }
       },
       "output": "binary"
     },
@@ -24,7 +27,10 @@
           "ip": null,
           "mask": null
         },
-        "transform": ":ip/:mask"
+        "transform": {
+          "eval": false,
+          "template": "<%= args[\"ip\"] %>/<%= args[\"mask\"] %>"
+        }
       },
       "output": "binary"
     }

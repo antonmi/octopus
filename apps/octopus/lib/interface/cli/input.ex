@@ -1,10 +1,13 @@
 defmodule Octopus.Interface.Cli.Input do
   alias Octopus.Utils
 
-  def call(args, %{"transform" => transform, "args" => args_config}) when is_binary(transform) do
+  def call(args, %{
+        "transform" => %{"template" => template, "eval" => eval},
+        "args" => args_config
+      }) do
     case validate_args(args, args_config) do
       {:ok, args} ->
-        {:ok, Utils.eval_pattern(transform, args)}
+        Utils.eval_template(template, args, eval)
 
       {:error, :invalid_arguments} ->
         {:error, :invalid_arguments}
