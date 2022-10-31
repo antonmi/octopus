@@ -11,7 +11,7 @@ defmodule Octopus.UtilsTest do
         "mask" => "24"
       }
 
-      assert Utils.eval_template(template, args, false) == {:ok, "1.2.3.4/24"}
+      assert Utils.eval_template(template, args, false) == "1.2.3.4/24"
     end
 
     test "with eval true" do
@@ -22,7 +22,7 @@ defmodule Octopus.UtilsTest do
         "age" => 123
       }
 
-      assert Utils.eval_template(template, args, true) == {:ok, ["Anton", 123]}
+      assert Utils.eval_template(template, args, true) == ["Anton", 123]
     end
   end
 end

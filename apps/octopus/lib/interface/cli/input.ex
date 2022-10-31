@@ -7,7 +7,7 @@ defmodule Octopus.Interface.Cli.Input do
       }) do
     case validate_args(args, args_config) do
       {:ok, args} ->
-        Utils.eval_template(template, args, eval)
+        {:ok, Utils.eval_template(template, args, eval)}
 
       {:error, :invalid_arguments} ->
         {:error, :invalid_arguments}

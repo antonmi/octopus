@@ -7,7 +7,7 @@ defmodule Octopus.Utils do
   end
 
   def eval_template(template, args, false) do
-    {:ok, EEx.eval_string(template, args: args)}
+    EEx.eval_string(template, args: args)
   end
 
   def eval_template(template, args, true) do
@@ -18,6 +18,6 @@ defmodule Octopus.Utils do
   defp eval_code(code) do
     quoted = Code.string_to_quoted!(code)
     {value, _binding} = Code.eval_quoted(quoted)
-    {:ok, value}
+    value
   end
 end

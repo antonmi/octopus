@@ -17,7 +17,7 @@ defmodule Octopus.Interface.JsonApi.Call do
   end
 
   defp build_url(url, path, params) do
-    {:ok, path} = Utils.eval_template(path, params, false)
+    path = Utils.eval_template(path, params, false)
 
     url
     |> URI.parse()
