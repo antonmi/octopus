@@ -1,4 +1,4 @@
-defmodule Octopus.Execution.Postgrex.Start do
+defmodule Octopus.Execution.PostgrexClient.Start do
   alias Octopus.Utils
 
   def call(%{"args" => args}) do

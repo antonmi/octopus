@@ -1,7 +1,6 @@
 defmodule Octopus.ServiceTest do
   use ExUnit.Case
   alias Octopus.Service
-  alias Octopus.Service.Storage
   alias Octopus.Test.Definitions
 
   describe "define" do

@@ -1,4 +1,4 @@
-defmodule Octopus.Execution.Postgrex do
+defmodule Octopus.Execution.PostgrexClient do
   #  use Octopus.Execution, start: __MODULE__.Start
 
   def run(args) do

@@ -1,7 +1,7 @@
 {
   "name": "postgres_sql",
   "execution": {
-    "type": "postgrex",
+    "type": "postgrex_client",
     "start": {
       "args": {
         "connection": {
