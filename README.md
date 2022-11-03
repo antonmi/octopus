@@ -109,4 +109,15 @@ For example:
 
 See [definitions](apps/octopus/test/definitions).
 
+### May be interesting to read
+#### Articles
+https://www.researchgate.net/publication/225018592_Semantically_Enabled_Service-Oriented_Architectures_A_Manifesto_and_a_Paradigm_Shift_in_Computer_Science
+https://www.researchgate.net/publication/4226789_Semantic_Web_Services_Grounding
+http://www.josemalvarez.es/web/mypapers/cods2009.pdf
+https://www.jucs.org/jucs_18_11/towards_a_practical_solution/jucs_18_11_1576_1597_rodriguez.pdf
+#### Other
+https://www.f5.com/company/blog/how-declarative-interfaces-democratize-infrastructure
+https://patents.google.com/patent/US10572129B2/en
+https://www.tutorialspoint.com/wsdl/wsdl_example.htm
+https://github.com/elixir-soap/soap
 

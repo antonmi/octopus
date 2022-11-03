@@ -1,11 +1,24 @@
 defmodule Octopus.Interface.JsonApi.Call do
   alias Octopus.Utils
 
-  def call(params, config) do
-    url = build_url(config["url"], config["path"], params)
-    method = parse_method(config["method"])
+  def call(params, %{"url" => url, "path" => path, "method" => method}) when method == "GET" do
+    url = build_url(url, path, params)
+    method = parse_method(method)
 
-    Finch.build(method, url)
+    do_request(Finch.build(method, url))
+  end
+
+  def call(data, %{"url" => url, "path" => path, "method" => method} = configs)
+      when method == "POST" do
+    url = build_url(url, path, %{})
+    method = parse_method(method)
+    headers = [{"Content-Length", "#{byte_size(data)}"} | prepare_headers(configs["headers"])]
+
+    do_request(Finch.build(method, url, headers, data))
+  end
+
+  defp do_request(finch_request) do
+    finch_request
     |> Finch.request(Octopus.Finch)
     |> case do
       {:ok, %Finch.Response{body: body}} ->
@@ -30,5 +43,14 @@ defmodule Octopus.Interface.JsonApi.Call do
       "GET" -> :get
       "POST" -> :post
     end
+  end
+
+  defp prepare_headers(nil), do: []
+
+  defp prepare_headers(config_headers) do
+    config_headers
+    |> Enum.reduce([], fn {key, value}, acc ->
+      [{key, value} | acc]
+    end)
   end
 end

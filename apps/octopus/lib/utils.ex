@@ -7,12 +7,22 @@ defmodule Octopus.Utils do
   end
 
   def eval_template(template, args, false) do
-    EEx.eval_string(template, args: args)
+    eval_eex_template(template, args: args)
   end
 
   def eval_template(template, args, true) do
-    evaluated_template = EEx.eval_string(template, args: args)
+    evaluated_template = eval_eex_template(template, args: args)
     eval_code(evaluated_template)
+  end
+
+  defp eval_eex_template(template, args: args) when is_binary(template) do
+    EEx.eval_string(template, args: args)
+  end
+
+  defp eval_eex_template(template, args: args) when is_list(template) do
+    template
+    |> Enum.join()
+    |> EEx.eval_string(args: args)
   end
 
   defp eval_code(code) do

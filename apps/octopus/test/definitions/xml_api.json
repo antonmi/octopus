@@ -1,0 +1,105 @@
+{
+  "name": "adequateshop",
+  "description": "https://www.appsloveworld.com/free-online-sample-xml-api-for-testing-purpose",
+  "interface": {
+    "type": "xml_api",
+    "get_travelers": {
+      "call": {
+        "method": "GET",
+        "path": "/api/Traveler",
+        "url": "http://restapi.adequateshop.com"
+      },
+      "input": {
+        "args": {
+          "page": null
+        }
+      },
+      "output": {
+        "transform": {
+          "eval": true,
+          "template": [
+            "SweetXml.xpath(",
+            "~S(<%= args %>),",
+            "SweetXml.sigil_x(\"//travelers/Travelerinformation\", 'l'),",
+            "id: SweetXml.sigil_x(\"./id/text()\"),",
+            "name: SweetXml.sigil_x(\"./name/text()\"),",
+            "email: SweetXml.sigil_x(\"./email/text()\"),",
+            "adderes: SweetXml.sigil_x(\"./adderes/text()\"),",
+            "createdat: SweetXml.sigil_x(\"./createdat/text()\")",
+            ")"
+            ]
+        }
+      }
+    },
+    "get_traveler": {
+      "call": {
+        "method": "GET",
+        "path": "/api/Traveler/<%= args[\"id\"] %>",
+        "url": "http://restapi.adequateshop.com"
+      },
+      "input": {
+        "args": {
+          "id": null
+        }
+      },
+      "output": {
+        "transform": {
+          "eval": true,
+          "template": [
+            "SweetXml.xpath(",
+            "~S(<%= args %>),",
+            "SweetXml.sigil_x(\"//Travelerinformation\"),",
+            "id: SweetXml.sigil_x(\"./id/text()\"),",
+            "name: SweetXml.sigil_x(\"./name/text()\"),",
+            "email: SweetXml.sigil_x(\"./email/text()\"),",
+            "adderes: SweetXml.sigil_x(\"./adderes/text()\"),",
+            "createdat: SweetXml.sigil_x(\"./createdat/text()\")",
+            ")"
+          ]
+        }
+      }
+    },
+    "create_traveler": {
+      "call": {
+        "method": "POST",
+        "path": "/api/Traveler",
+        "url": "http://restapi.adequateshop.com",
+        "headers": {"Content-Type": "application/xml"}
+      },
+      "input": {
+        "args": {
+          "name": null,
+          "email": null,
+          "adderes": null
+        },
+        "transform": {
+          "eval": false,
+          "template": [
+            "<?xml version=\"1.0\"?>\n",
+            "<Travelerinformation>\n",
+            "<name><%= args[\"name\"] %></name>\n",
+            "<email><%= args[\"email\"] %></email>\n",
+            "<adderes><%= args[\"adderes\"] %></adderes>\n",
+            "</Travelerinformation>"
+          ]
+        }
+      },
+      "output": {
+        "transform": {
+          "eval": true,
+          "template": [
+            "SweetXml.xpath(",
+            "~S(<%= args %>),",
+            "SweetXml.sigil_x(\"//Travelerinformation\"),",
+            "id: SweetXml.sigil_x(\"./id/text()\"),",
+            "name: SweetXml.sigil_x(\"./name/text()\"),",
+            "email: SweetXml.sigil_x(\"./email/text()\"),",
+            "adderes: SweetXml.sigil_x(\"./adderes/text()\"),",
+            "createdat: SweetXml.sigil_x(\"./createdat/text()\")",
+            ")"
+          ]
+        }
+      }
+    }
+  }
+}

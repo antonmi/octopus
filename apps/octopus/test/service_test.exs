@@ -62,5 +62,28 @@ defmodule Octopus.ServiceTest do
       {:ok, result} = Octopus.Service.PostgresSql.get_user_by_name(%{"name" => "Anton"})
       assert [_id, "Anton", 123] = hd(result[:rows])
     end
+
+    test "define xml_api and call" do
+      definition = Definitions.xml_api()
+      {:ok, _code} = Service.define(definition)
+
+      {:ok, [record | _]} = Octopus.Service.Adequateshop.get_travelers(%{"page" => 1})
+      assert %{adderes: _, createdat: _, email: _, id: _, name: _} = record
+
+      random_string = for _ <- 1..10, into: "", do: <<Enum.random('0123456789abcdef')>>
+      email = "anton@#{random_string}.com"
+
+      {:ok, record} =
+        Octopus.Service.Adequateshop.create_traveler(%{
+          "name" => "Anton",
+          "email" => email,
+          "adderes" => "Germany"
+        })
+
+      assert %{adderes: _, createdat: _, email: _, id: id, name: 'Anton'} = record
+
+      {:ok, record} = Octopus.Service.Adequateshop.get_traveler(%{"id" => "#{id}"})
+      assert %{adderes: _, createdat: _, email: _, id: _, name: 'Anton'} = record
+    end
   end
 end

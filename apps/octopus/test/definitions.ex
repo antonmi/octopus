@@ -26,4 +26,8 @@ defmodule Octopus.Test.Definitions do
   def postgres_sql do
     read_and_decode("postgres_sql.json")
   end
+
+  def xml_api do
+    read_and_decode("xml_api.json")
+  end
 end
