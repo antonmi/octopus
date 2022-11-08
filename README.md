@@ -120,4 +120,5 @@ https://www.f5.com/company/blog/how-declarative-interfaces-democratize-infrastru
 https://patents.google.com/patent/US10572129B2/en
 https://www.tutorialspoint.com/wsdl/wsdl_example.htm
 https://github.com/elixir-soap/soap
-
+#### BEAM code server
+https://blog.appsignal.com/2021/07/27/a-guide-to-hot-code-reloading-in-elixir.html
