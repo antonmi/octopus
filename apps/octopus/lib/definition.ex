@@ -1,5 +1,5 @@
 defmodule Octopus.Definition do
-  alias Octopus.Utils
+  alias Octopus.{Configs, Utils}
 
   def define(service_name, interface_definition) do
     service_name = Utils.modulize(service_name)
@@ -7,6 +7,7 @@ defmodule Octopus.Definition do
 
     template()
     |> EEx.eval_string(
+      namespace: namespace(),
       service_name: service_name,
       interface_module_name: interface_module_name,
       interface: interface_definition
@@ -20,7 +21,7 @@ defmodule Octopus.Definition do
 
   defp template() do
     """
-    defmodule Octopus.Service.<%= service_name %> do
+    defmodule <%= namespace %>.<%= service_name %> do
       <%= for {name, attrs} <- interface do %>
         def <%= name %>(args) do
           Octopus.Interface.<%= interface_module_name %>.call(args, "<%= Base.encode64(:erlang.term_to_binary(attrs)) %>")
@@ -28,6 +29,10 @@ defmodule Octopus.Definition do
       <% end %>
     end
     """
+  end
+
+  defp namespace do
+    Configs.services_namespace()
   end
 
   defp eval_code(code) do

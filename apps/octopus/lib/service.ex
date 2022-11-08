@@ -1,7 +1,7 @@
 defmodule Octopus.Service do
   alias Octopus.Definition
   alias Octopus.Service.Storage
-  alias Octopus.Utils
+  alias Octopus.{Configs, Utils}
 
   def define(definition) do
     with {:ok, code} <- Definition.define(definition["name"], definition["interface"]),
@@ -29,11 +29,15 @@ defmodule Octopus.Service do
 
   defp service_module_name(name) do
     name = Utils.modulize(name)
-    String.to_existing_atom("Elixir.Octopus.Service.#{name}")
+    String.to_existing_atom("Elixir.#{services_namespace()}.#{name}")
   end
 
   defp execution_module_name(name) do
     name = Utils.modulize(name)
     String.to_existing_atom("Elixir.Octopus.Execution.#{name}")
+  end
+
+  defp services_namespace do
+    Configs.services_namespace()
   end
 end

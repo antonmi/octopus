@@ -53,12 +53,12 @@ After running
 Octopus.Service.define(definition)
 ```
 magic happens: 
-- a new Elixir module appears: `Octopus.Service.Agify` ("name": "agify").
+- a new Elixir module appears: `Octopus.Services.Agify` ("name": "agify").
 - there is `age_for_name/1` function defined in the module, which takes `%{"name" => "AnyName"}` as input and return `{:ok, map}`
 
 So one can call
 ```elixir
-iex> Octopus.Service.Agify.age_for_name(%{"name" => "Anton"})
+iex> Octopus.Services.Agify.age_for_name(%{"name" => "Anton"})
 {:ok, %{"age" => 55, "count" => 23328, "name" => "Anton"}}
 ```
 

@@ -15,7 +15,7 @@ defmodule Api.Requests.DefinitionTest do
     data = Jason.decode!(conn.resp_body)
     assert data["code"]
 
-    {:ok, string} = Octopus.Service.Ipcalc.for_ip(%{"ip" => "192.168.0.1"})
+    {:ok, string} = Octopus.Services.Ipcalc.for_ip(%{"ip" => "192.168.0.1"})
     assert String.contains?(string, "Address:   192.168.0.1")
 
     conn =
