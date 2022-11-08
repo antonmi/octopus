@@ -1,7 +1,7 @@
 {
   "name": "my_module",
   "execution": {
-    "type": "compile",
+    "type": "elixir_module",
     "start": {
       "code": [
         "defmodule TheModule do",
@@ -17,8 +17,9 @@
     "type": "code",
     "add": {
       "call": {
+        "sandbox": true,
         "function": "add",
-        "module": "Octopus.Sandbox.TheModule"
+        "module": "TheModule"
       },
       "input": {
         "args": {
@@ -34,8 +35,9 @@
     },
     "hello": {
       "call": {
+        "sandbox": true,
         "function": "hello",
-        "module": "Octopus.Sandbox.TheModule"
+        "module": "TheModule"
       },
       "input": {
         "args": {
@@ -44,6 +46,23 @@
         "transform": {
           "eval": false,
           "template": "<%= args[\"name\"] %>"
+        }
+      },
+      "output": "as_is"
+    },
+    "string_length": {
+      "call": {
+        "sandbox": false,
+        "function": "length",
+        "module": "String"
+      },
+      "input": {
+        "args": {
+          "string": null
+        },
+        "transform": {
+          "eval": false,
+          "template": "<%= args[\"string\"] %>"
         }
       },
       "output": "as_is"

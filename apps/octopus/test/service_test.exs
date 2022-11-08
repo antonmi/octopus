@@ -43,6 +43,9 @@ defmodule Octopus.ServiceTest do
 
       {:ok, result} = Octopus.Service.MyModule.add(%{"x" => 1, "y" => 2})
       assert result == 3
+
+      {:ok, result} = Octopus.Service.MyModule.string_length(%{"string" => "Hello"})
+      assert result == 5
     end
 
     test "define postgres_sql and call" do

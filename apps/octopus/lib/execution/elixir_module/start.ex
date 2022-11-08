@@ -1,4 +1,4 @@
-defmodule Octopus.Execution.Compile.Start do
+defmodule Octopus.Execution.ElixirModule.Start do
   def call(%{"code" => code}) when is_binary(code) do
     code
     |> namespace_code()

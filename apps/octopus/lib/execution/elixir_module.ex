@@ -1,4 +1,4 @@
-defmodule Octopus.Execution.Compile do
+defmodule Octopus.Execution.ElixirModule do
   #  use Octopus.Execution, start: __MODULE__.Start
 
   def run(args) do
