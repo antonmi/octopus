@@ -122,3 +122,4 @@ https://www.tutorialspoint.com/wsdl/wsdl_example.htm
 https://github.com/elixir-soap/soap
 #### BEAM code server
 https://blog.appsignal.com/2021/07/27/a-guide-to-hot-code-reloading-in-elixir.html
+https://groups.google.com/g/elixir-lang-talk/c/RzWVMrHaZF8
