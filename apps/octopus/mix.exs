@@ -11,8 +11,12 @@ defmodule OctopusCore.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
+      deps: deps(),
+      description: description(),
+      package: package(),
+      source_url: "https://github.com/antonmi/octopus",
       deps: deps()
-    ]
+                ]
   end
 
   # Run "mix help compile.app" to learn about applications.
@@ -20,6 +24,19 @@ defmodule OctopusCore.MixProject do
     [
       extra_applications: [:logger, :eex],
       mod: {Octopus.Application, []}
+    ]
+  end
+
+  defp description do
+    "Declarative interface mapping"
+  end
+
+  defp package do
+    [
+      files: ~w(lib mix.exs README.md),
+      maintainers: ["Anton Mishchuk"],
+      licenses: ["MIT"],
+      links: %{"github" => "https://github.com/antonmi/octopus"}
     ]
   end
 
