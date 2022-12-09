@@ -47,7 +47,8 @@ defmodule OctopusCore.MixProject do
       {:finch, "~> 0.13"},
       {:postgrex, "~> 0.16.5"},
       {:jason, "~> 1.4"},
-      {:sweet_xml, "~> 0.7.1"}
+      {:sweet_xml, "~> 0.7.1"},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
 end
