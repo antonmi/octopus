@@ -21,9 +21,7 @@ defmodule OctopusCore.MixProject do
   defp deps do
     [
       {:ex_json_schema, "~> 0.9"},
-      {:octopus_client_http_finch,
-       path: "/Users/anton.mishchukkloeckner.com/elixir/octopus_client_http_finch", only: :test},
-      {:bypass, "~> 2.1", only: :test}
+      {:jason, "~> 1.4"}
     ]
   end
 end

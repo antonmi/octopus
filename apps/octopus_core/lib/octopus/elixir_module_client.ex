@@ -1,6 +1,6 @@
-defmodule Octopus.Module do
+defmodule Octopus.ElixirModuleClient do
   @moduledoc """
-     Defines a client for defining elixir modules in runtime.
+     A client for defining elixir modules in runtime.
   """
 
   defmodule Adapter do
@@ -8,7 +8,7 @@ defmodule Octopus.Module do
       module = build_module(Map.fetch!(configs, "module"))
       function = String.to_atom(Map.fetch!(configs, "function"))
 
-      {:ok, Octopus.Module.call(module, function, args, state)}
+      {:ok, Octopus.ElixirModuleClient.call(module, function, args, state)}
     end
 
     defp build_module(module_name) do

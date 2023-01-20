@@ -1,7 +1,7 @@
 {
   "name": "elixir-module-service",
   "client": {
-    "module": "octopus.module",
+    "module": "octopus.elixir-module-client",
     "start": {
       "code": [
         "defmodule TheModule do",

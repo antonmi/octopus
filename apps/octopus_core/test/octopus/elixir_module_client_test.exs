@@ -3,11 +3,7 @@ defmodule Octopus.ElixirModuleExampleTest do
   alias Octopus.Definition
 
   def parse_definition() do
-    path = Path.expand("..", __ENV__.file)
-
-    "#{path}/elixir_module_example.json"
-    |> File.read!()
-    |> Jason.decode!()
+    Octopus.Test.Definitions.read_and_decode("elixir_module_example.json")
   end
 
   @service_module Octopus.Services.ElixirModuleService
