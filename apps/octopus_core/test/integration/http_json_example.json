@@ -1,0 +1,41 @@
+{
+  "name": "agify",
+  "client": {
+    "module": "OctopusClientHttpFinch",
+    "adapter": "OctopusClientHttpFinch.Adapter",
+    "start": {
+      "base_url": "https://api.agify.io/",
+      "pool_size": 10,
+      "headers": {}
+    },
+    "ping": {},
+    "stop": {}
+  },
+  "interface": {
+    "age_for_name": {
+      "input": {
+        "name": {"type": "string"}
+      },
+      "prepare": {
+        "method": "GET",
+        "path": "/",
+        "params": {
+          "name": "args['name']"
+        }
+      },
+      "call": {
+        "parse_json_body": true
+      },
+      "transform": {
+        "status": "args['status']",
+        "x-request-id": "get_in(args, ['headers', 'x-request-id'])",
+        "age": "args['body']['age']",
+        "name": "get_in(args, ['body', 'name'])"
+      },
+      "output": {
+        "name": {"type": "string"},
+        "age": {"type": "number"}
+      }
+    }
+  }
+}

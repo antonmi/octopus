@@ -1,0 +1,2 @@
+defmodule OctopusCore do
+end

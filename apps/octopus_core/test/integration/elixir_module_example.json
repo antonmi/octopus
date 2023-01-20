@@ -1,0 +1,49 @@
+{
+  "name": "elixir-module-service",
+  "client": {
+    "module": "octopus.module",
+    "start": {
+      "code": [
+        "defmodule TheModule do",
+        "def hello(%{\"name\" => name}) do",
+        "\"Hello #{name}\"",
+        "end",
+        "def add(%{\"x\" => x, \"y\" => y}), do: x + y",
+        "end"
+      ]
+    }
+  },
+  "interface": {
+    "hello": {
+      "input": {
+        "name": {"type": "string"}
+      },
+      "call": {
+        "module": "TheModule",
+        "function": "hello"
+      },
+      "transform": {
+        "greeting": "args"
+      },
+      "output": {
+        "greeting": {"type": "string"}
+      }
+    },
+    "add_numbers": {
+      "input": {
+        "x": {"type": "number"},
+        "y": {"type": "number"}
+      },
+      "call": {
+        "module": "TheModule",
+        "function": "add"
+      },
+      "transform": {
+        "result": "args"
+      },
+      "output": {
+        "result": {"type": "number"}
+      }
+    }
+  }
+}

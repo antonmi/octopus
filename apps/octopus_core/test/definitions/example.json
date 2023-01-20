@@ -1,0 +1,33 @@
+{
+  "name": "example-service",
+  "client": {
+    "module": "todo",
+    "adapter": "todo",
+    "start": {
+      "foo": "bar",
+      "baz": 10
+    }
+  },
+  "interface": {
+    "my_function": {
+      "input": {
+        "in": {"type": "string"}
+      },
+      "prepare": {
+        "foo": "args['in']"
+      },
+      "call": {},
+      "transform": {
+        "out": "args['bar']"
+      },
+      "output": {
+        "out": {"type": "string"}
+      }
+    },
+    "simple": {
+      "input": {"foo":  {"type": "string"}},
+      "output": {"bar":  {"type": "string"}}
+    },
+    "empty": {}
+  }
+}
