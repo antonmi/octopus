@@ -14,7 +14,7 @@ defmodule Api.Application do
   end
 
   defp port() do
-    (System.get_env("PORT") || "4001")
+    (System.get_env("PORT") || "4002")
     |> String.to_integer()
   end
 end
