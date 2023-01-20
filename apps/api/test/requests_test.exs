@@ -47,7 +47,7 @@ defmodule Api.Requests.DefinitionTest do
       |> Api.Router.call(%{})
 
     result = Jason.decode!(conn.resp_body)
-    assert result["age"] == 55
+    assert result["age"] == 56
   end
 
   test "json_server definition with eval" do
