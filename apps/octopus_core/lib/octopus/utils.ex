@@ -16,6 +16,16 @@ defmodule Octopus.Utils do
     eval_code(evaluated_template)
   end
 
+  def module_exist?(module) do
+    case Code.ensure_compiled(module) do
+      {:module, ^module} ->
+        true
+
+      {:error, _} ->
+        false
+    end
+  end
+
   defp eval_eex_template(template, args: args) when is_binary(template) do
     EEx.eval_string(template, args: args)
   end

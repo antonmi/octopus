@@ -5,20 +5,50 @@ defmodule OctopusAgent.RequestsTest do
   alias OctopusAgent.Router
   alias OctopusAgent.Test.Definitions
 
+  defmodule Client do
+    def start(args, configs) do
+      {:ok, %{"state" => "here", "args" => args, "configs" => configs}}
+    end
+
+    def call(%{"foo" => foo}, _configs, _state) do
+      {:ok, %{"bar" => foo <> "baz"}}
+    end
+  end
+
+  defmodule Adapter do
+    def call(args, configs, state) do
+      Client.call(args, configs, state)
+    end
+  end
+
+  @definition Definitions.read_from_octopus_core("example.json")
+              |> Jason.decode!()
+              |> put_in(["client", "module"], "OctopusAgent.RequestsTest.Client")
+              |> put_in(["client", "adapter"], "OctopusAgent.RequestsTest.Adapter")
+              |> Jason.encode!()
+
   describe "define" do
     setup do
-      definition = Definitions.read_from_octopus_core("example.json")
-      %{definition: definition}
+      resp =
+        :post
+        |> conn("/define", @definition)
+        |> Router.call(%{})
+      %{resp: resp}
     end
 
-    test "post definition and check module", %{definition: definition} do
-      conn =
-        :post
-        |> conn("/define", definition)
-        |> Router.call(%{})
 
+    test "post definition and check module", %{resp: resp} do
+      assert Jason.decode!(resp.body) == %{"ok" => "example-service"}
       assert apply(Octopus.Services.ExampleService, :ok?, []) == true
     end
+
+    test "start service" do
+
+    end
+  end
+  
+  describe "define with invalid payload" do
+    
   end
 
 #

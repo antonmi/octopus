@@ -27,8 +27,8 @@ defmodule Api.Router do
 
   post "/define" do
     case Octopus.Service.define(conn.params) do
-      {:ok, code} ->
-        send_resp(conn, 200, Jason.encode!(%{code: code}))
+      {:ok, service_name} ->
+        send_resp(conn, 200, Jason.encode!(%{ok: service_name}))
     end
   end
 

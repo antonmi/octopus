@@ -27,7 +27,7 @@ defmodule Octopus.DefinitionTest do
   @service_module Octopus.Services.ExampleService
 
   setup_all do
-    {:ok, _code} =
+    {:ok, "example-service"} =
       @definition
       |> Definition.new()
       |> Definition.define()
@@ -71,6 +71,35 @@ defmodule Octopus.DefinitionTest do
     test "empty/1" do
       {:ok, result} = apply(@service_module, :empty, [%{"foo" => "foo"}])
       assert result == %{"bar" => "foobaz"}
+    end
+  end
+
+  describe "invalid definition" do
+    test "missing service name" do
+      assert_raise Octopus.DefinitionError, "Missing service name!", fn ->
+        @definition
+        |> Map.delete("name")
+        |> Definition.new()
+        |> Definition.define()
+      end
+    end
+
+    test "client module doesn't exist" do
+      assert_raise Octopus.DefinitionError, "Module 'Client2' doesn't exist!", fn ->
+        @definition
+        |> put_in(["client", "module"], "Client2")
+        |> Definition.new()
+        |> Definition.define()
+      end
+    end
+
+    test "adapter module doesn't exist" do
+      assert_raise Octopus.DefinitionError, "Module 'Nope' doesn't exist!", fn ->
+        @definition
+        |> put_in(["client", "adapter"], "Nope")
+        |> Definition.new()
+        |> Definition.define()
+      end
     end
   end
 end

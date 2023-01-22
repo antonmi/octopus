@@ -1,20 +1,37 @@
+defmodule Octopus.DefinitionError do
+  defexception [:message]
+end
+
 defmodule Octopus.Definition do
-  alias Octopus.{Configs, Utils}
+  alias Octopus.{Configs, DefinitionError, Utils}
   defstruct [:name, :client, :interface]
 
   def new(definition) do
+    name = definition["name"] || raise DefinitionError, "Missing service name!"
+    client = definition["client"] || raise DefinitionError, "Missing client definition!"
+    interface = definition["interface"] || raise DefinitionError, "Missing interface definition!"
+
     %__MODULE__{
-      name: definition["name"],
-      client: definition["client"],
-      interface: definition["interface"]
+      name: name,
+      client: client,
+      interface: interface
     }
   end
 
   def define(definition) do
     service_module = Utils.modulize(definition.name)
-    client_module = Utils.modulize(definition.client["module"])
+
+    client_module =
+      definition.client["module"]
+      |> Utils.modulize()
+      |> validate_module_or_raise()
+
     adapter_name = definition.client["adapter"] || definition.client["module"] <> ".Adapter"
-    adapter_module = Utils.modulize(adapter_name)
+
+    adapter_module =
+      adapter_name
+      |> Utils.modulize()
+      |> validate_module_or_raise()
 
     template()
     |> EEx.eval_string(
@@ -26,6 +43,10 @@ defmodule Octopus.Definition do
       interface: definition.interface
     )
     |> eval_code()
+    |> case do
+      {:ok, _code} ->
+        {:ok, definition.name}
+    end
   end
 
   def define_state(module, state) do
@@ -95,5 +116,13 @@ defmodule Octopus.Definition do
     quoted = Code.string_to_quoted!(code)
     {_value, _binding} = Code.eval_quoted(quoted)
     {:ok, code}
+  end
+
+  defp validate_module_or_raise(module) do
+    unless Utils.module_exist?(String.to_atom("Elixir.#{module}")) do
+      raise DefinitionError, "Module '#{module}' doesn't exist!"
+    end
+
+    module
   end
 end
