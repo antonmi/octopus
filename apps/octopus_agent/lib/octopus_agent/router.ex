@@ -21,32 +21,44 @@ defmodule OctopusAgent.Router do
     send_resp(conn, 200, "sorry, no icon")
   end
 
-  get "/api/test" do
-    send_resp(conn, 200, "Octopus Agent is ok")
-  end
-
   post "/define" do
     {:ok, body, conn} = read_body(conn)
     map = Jason.decode!(body)
+
     case Octopus.define(map) do
-      {:ok, code} ->
-        send_resp(conn, 200, Jason.encode!(%{code: code}))
+      {:ok, name} ->
+        send_resp(conn, 200, Jason.encode!(%{ok: name}))
+
+      {:error, reason} ->
+        send_resp(conn, 400, Jason.encode!(%{error: reason}))
     end
   end
 
-#  post "services/:name/:function" do
-#    case Octopus.Service.call(conn.params["name"], conn.params["function"], conn.body_params) do
-#      {:ok, result} ->
-#        send_resp(conn, 200, maybe_encode(result))
-#
-#      {:error, error} ->
-#        send_resp(conn, 500, inspect(error))
-#    end
-#  end
-#
-#  defp maybe_encode(result) when is_map(result), do: Jason.encode!(result)
-#  defp maybe_encode(result) when is_binary(result), do: result
-#  defp maybe_encode(result) when is_number(result), do: "#{result}"
+  post "/start/:name" do
+    {:ok, body, conn} = read_body(conn)
+    map = Jason.decode!(body)
+
+    case Octopus.start(conn.params["name"], map) do
+      {:ok, state} ->
+        send_resp(conn, 200, Jason.encode!(state))
+
+      {:error, reason} ->
+        send_resp(conn, 400, Jason.encode!(%{error: reason}))
+    end
+  end
+
+  post "services/:name/:function" do
+    {:ok, body, conn} = read_body(conn)
+    map = Jason.decode!(body)
+
+    case Octopus.call(conn.params["name"], conn.params["function"], map) do
+      {:ok, result} ->
+        send_resp(conn, 200, Jason.encode!(result))
+
+      {:error, reason} ->
+        send_resp(conn, 400, Jason.encode!(%{error: reason}))
+    end
+  end
 
   match _ do
     send_resp(conn, 404, "NOT FOUND")
