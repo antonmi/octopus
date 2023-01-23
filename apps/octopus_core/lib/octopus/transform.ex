@@ -32,7 +32,11 @@ defmodule Octopus.Transform do
   end
 
   defp parse_value(value, args, helpers) when is_binary(value) do
-    Eval.eval_string(value, args: args, helpers: helpers)
+    if String.contains?(value, "args") do
+      Eval.eval_string(value, args: args, helpers: helpers)
+    else
+      value
+    end
   end
 
   defp parse_value(value, _args, _helpers), do: value
