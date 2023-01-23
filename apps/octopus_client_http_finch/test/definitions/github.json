@@ -1,0 +1,61 @@
+{
+  "name": "github",
+  "client": {
+    "module": "OctopusClientHttpFinch",
+    "adapter": "OctopusClientHttpFinch.Adapter",
+    "start": {
+      "base_url": "https://api.github.com",
+        "headers": {
+          "Authorization": "Bearer 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",
+          "Accept": "application/vnd.github+json"
+        }
+    }
+  },
+  "interface": {
+    "find_users": {
+      "input": {
+        "username": {
+          "type": "string"
+        }
+      },
+      "prepare": {
+        "method": "GET",
+        "path": "/search/users",
+        "params": {
+          "q": "args['username']"
+        }
+      },
+      "call": {
+        "parse_json_body": true
+      },
+      "transform": {
+        "total_count": "get_in(args, ['body', 'total_count'])",
+        "users": "get_in(args, ['body', 'items'])"
+      },
+      "output": {
+        "total_count": {"type": "integer"},
+        "users": {"type": "array"}
+      }
+    },
+    "get_followers": {
+      "input": {
+        "username": {
+          "type": "string"
+        }
+      },
+      "prepare": {
+        "method": "GET",
+        "path": "'users/' <> args['username'] <> '/followers'"
+      },
+      "call": {
+        "parse_json_body": true
+      },
+      "transform": {
+        "followers": "args['body']"
+      },
+      "output": {
+        "followers": {"type": "array"}
+      }
+    }
+  }
+}

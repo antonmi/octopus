@@ -19,7 +19,7 @@ defmodule Octopus.EvalTest do
 
   test "with single quotes" do
     args = %{"foo" => "the_foo"}
-    result = Octopus.Eval.eval_string("args[\"foo\"] <> \"baz\"", args: args)
+    result = Octopus.Eval.eval_string("args['foo'] <> 'baz'", args: args)
     assert result == "the_foobaz"
   end
 
@@ -45,10 +45,18 @@ defmodule Octopus.EvalTest do
     test "it allows calling functions from the module" do
       args = %{"x" => 1, "y" => 2}
       template = "add(args)"
-      assert Octopus.Eval.eval_string(template, args: args, helpers: [Helpers, OtherHelpers]) == 3
 
-      assert Octopus.Eval.eval_string("mult(args)", args: args, helpers: [Helpers, OtherHelpers]) ==
-               2
+      assert Octopus.Eval.eval_string(
+               template,
+               args: args,
+               helpers: [Helpers, OtherHelpers]
+             ) == 3
+
+      assert Octopus.Eval.eval_string(
+               "mult(args)",
+               args: args,
+               helpers: [Helpers, OtherHelpers]
+             ) == 2
     end
   end
 end

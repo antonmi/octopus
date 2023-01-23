@@ -6,8 +6,8 @@ defmodule OctopusClientHttpFinch.Adapter do
     method = method_to_atom(args["method"])
     headers = args["headers"] || %{}
 
-    case method do
-      :get ->
+    cond do
+      method in [:get, :head, :delete, :options] ->
         %Request{
           method: method,
           path: args["path"] || "/",
@@ -16,7 +16,7 @@ defmodule OctopusClientHttpFinch.Adapter do
         }
         |> do_call(configs, state)
 
-      :post ->
+      method in [:post, :put, :patch] ->
         headers = Map.put(headers, "Content-Length", "#{byte_size(args["body"])}")
 
         %Request{

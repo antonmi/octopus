@@ -27,7 +27,7 @@
       "transform": {
         "status": "args['status']",
         "x-request-id": "get_in(args, ['headers', 'x-request-id'])",
-        "age": "args['body']['age']",
+        "age": "get_in(args, ['body', 'age'])",
         "name": "get_in(args, ['body', 'name'])"
       },
       "output": {

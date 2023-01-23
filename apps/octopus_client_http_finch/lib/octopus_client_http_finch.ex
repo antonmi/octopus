@@ -90,11 +90,14 @@ defmodule OctopusClientHttpFinch do
   defp build_url(url, path, params) do
     url
     |> URI.parse()
-    |> Map.put(:path, path)
+    |> Map.put(:path, prefix_with_slash_if_needed(path))
     |> Map.put(:query, URI.encode_query(params))
   end
 
   defp headers_to_list(headers) do
     Enum.reduce(headers, [], fn {key, value}, acc -> [{key, value} | acc] end)
   end
+
+  defp prefix_with_slash_if_needed("/" <> path), do: "/" <> path
+  defp prefix_with_slash_if_needed(path), do: "/" <> path
 end
