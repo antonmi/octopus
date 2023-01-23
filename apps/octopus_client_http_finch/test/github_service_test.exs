@@ -12,7 +12,11 @@ defmodule Octopus.GithubServiceTest do
 
   setup_all do
     {:ok, "github"} = Octopus.define(parse_definition())
-    {:ok, _state} = Octopus.start("github")
+
+    {:ok, _state} =
+      Octopus.start("github", %{
+        "headers" => %{"Authorization" => "Bearer #{System.get_env("GITHUB_TOKEN")}"}
+      })
 
     :ok
   end

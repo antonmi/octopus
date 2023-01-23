@@ -42,7 +42,7 @@ defmodule OctopusClientHttpFinch do
 
   def start(args, configs \\ %{}) do
     base_url = args["base_url"] || configs["base_url"]
-    headers = args["headers"] || configs["headers"] || %{}
+    headers = Map.merge(configs["headers"] || %{}, args["headers"] || %{})
     pool_size = args["pool_size"] || configs["pool_size"] || @default_pool_size
     name = String.to_atom(configs["process_name"] || generate_process_name())
 

@@ -6,7 +6,6 @@
     "start": {
       "base_url": "https://api.github.com",
         "headers": {
-          "Authorization": "Bearer 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",
           "Accept": "application/vnd.github+json"
         }
     }
