@@ -30,6 +30,12 @@ defmodule Octopus.EvalTest do
     assert result == "Anton"
   end
 
+  test "to_string" do
+    args = %{"x" => 1}
+    result = Octopus.Eval.eval_string("to_string(args['x'])", args: args)
+    assert result == "1"
+  end
+
   test "with variables" do
     args = %{"x" => 1, "y" => 2}
     template = "{args[\"x\"], args[\"y\"], \"path/#{args["x"]}\"}"

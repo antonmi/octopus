@@ -40,11 +40,12 @@ defmodule OctopusClientHttpFinch do
 
   @default_pool_size 10
 
+  @spec start(map(), map()) :: {:ok, State.t()}
   def start(args, configs \\ %{}) do
     base_url = args["base_url"] || configs["base_url"]
     headers = Map.merge(configs["headers"] || %{}, args["headers"] || %{})
     pool_size = args["pool_size"] || configs["pool_size"] || @default_pool_size
-    name = String.to_atom(configs["process_name"] || generate_process_name())
+    name = String.to_atom(args["process_name"] || configs["process_name"] || generate_process_name())
 
     spec = {Finch, name: name, pools: %{base_url => [size: pool_size]}}
 

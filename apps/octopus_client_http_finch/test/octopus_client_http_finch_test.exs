@@ -1,7 +1,6 @@
 defmodule OctopusClientHttpFinchTest do
   use ExUnit.Case
 
-  alias OctopusClientHttpFinch
   alias OctopusClientHttpFinch.{Request, Response, State}
 
   @base_url "http://localhost"
@@ -15,7 +14,7 @@ defmodule OctopusClientHttpFinchTest do
       %{state: state}
     end
 
-    test "checks a state", %{state: state} do
+    test "checks the state", %{state: state} do
       assert Process.alive?(state.pid)
       assert state.base_url == @base_url
       assert state.headers == %{"Content-Type" => "application/json"}

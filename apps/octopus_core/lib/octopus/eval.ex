@@ -103,6 +103,7 @@ defmodule Octopus.Eval do
           rem: 2,
           round: 1,
           tl: 1,
+          to_string: 1,
           trunc: 1,
           tuple_size: 1,
           update_in: 3
