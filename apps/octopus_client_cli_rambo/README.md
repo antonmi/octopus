@@ -1,21 +1,37 @@
 # OctopusClientCliRambo
 
-**TODO: Add description**
+**Execute unix commands**
 
-## Installation
+### Example
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `octopus_client_cli_rambo` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:octopus_client_cli_rambo, "~> 0.1.0"}
-  ]
-end
+```json
+{
+  "name": "files",
+  "client": {
+    "module": "OctopusClientCliRambo",
+    "init": {}
+  },
+  "interface": {
+    "ls": {
+      "input": {
+        "path": {"type": "string"}
+      },
+      "prepare": {
+        "command": "ls",
+        "input": "args['path']"
+      },
+      "call": {
+        "split_by_newline": true
+      },
+      "transform": {
+        "status": "args['status']",
+        "output": "args['out']"
+      },
+      "output": {
+        "status": {"type": "number"},
+        "output": {"type": "array"}
+      }
+    }
+  }
+}
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/octopus_client_cli_rambo>.
-

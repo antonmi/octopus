@@ -1,1 +1,1 @@
-## Octopus core
+## Octopus

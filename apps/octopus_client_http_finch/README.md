@@ -1,21 +1,68 @@
 # OctopusClientHttpFinch
 
-**TODO: Add description**
+**HTTP client**
 
-## Installation
+### Example
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `octopus_client_http_finch` to your list of dependencies in `mix.exs`:
+```json
+{
+  "name": "github",
+  "client": {
+    "module": "OctopusClientHttpFinch",
+    "init": {
+      "base_url": "https://api.github.com",
+        "headers": {
+          "Accept": "application/vnd.github+json"
+        }
+    }
+  },
+  "interface": {
+    "find_users": {
+      "input": {
+        "username": {
+          "type": "string"
+        }
+      },
+      "prepare": {
+        "method": "GET",
+        "path": "/search/users",
+        "params": {
+          "q": "args['username']"
+        }
+      },
+      "call": {
+        "parse_json_body": true
+      },
+      "transform": {
+        "total_count": "get_in(args, ['body', 'total_count'])",
+        "users": "get_in(args, ['body', 'items'])"
+      },
+      "output": {
+        "total_count": {"type": "integer"},
+        "users": {"type": "array"}
+      }
+    },
+    "get_followers": {
+      "input": {
+        "username": {
+          "type": "string"
+        }
+      },
+      "prepare": {
+        "method": "GET",
+        "path": "'users/' <> args['username'] <> '/followers'"
+      },
+      "call": {
+        "parse_json_body": true
+      },
+      "transform": {
+        "followers": "args['body']"
+      },
+      "output": {
+        "followers": {"type": "array"}
+      }
+    }
+  }
+}
 
-```elixir
-def deps do
-  [
-    {:octopus_client_http_finch, "~> 0.1.0"}
-  ]
-end
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/octopus_client_http_finch](https://hexdocs.pm/octopus_client_http_finch).
-

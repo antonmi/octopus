@@ -1,21 +1,85 @@
 # OctopusClientPostgrex
 
-**TODO: Add description**
+**Postgres client for Octopus**
 
-## Installation
+### Example
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `octopus_client_postgrex` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:octopus_client_postgrex, "~> 0.1.0"}
-  ]
-end
+```json
+{
+  "name": "users",
+  "client": {
+    "module": "OctopusClientPostgrex",
+    "init": {
+      "host": "localhost",
+      "port": "5432",
+      "username": "postgres",
+      "password": "postgres",
+      "database": "octopus_test"
+    }
+  },
+  "interface": {
+    "all": {
+      "input": {},
+      "prepare": {
+        "statement": "SELECT * FROM users",
+        "params": []
+      },
+      "call": {
+        "opts": {
+          "timeout": 100
+        }
+      },
+      "transform": {
+        "columns": "args['columns']",
+        "num_rows": "args['num_rows']",
+        "rows": "args['rows']"
+      },
+      "output": {
+        "columns": {"type": "array", "items": {"type": "string"}},
+        "num_rows": {"type": "integer"},
+        "rows": {"type": "array"}
+      }
+    },
+    "insert": {
+      "input": {
+        "name": {"type": "string"},
+        "age": {"type": "integer"}
+      },
+      "prepare": {
+        "statement": "INSERT INTO users (name, age) VALUES ($1, $2) RETURNING id",
+        "params": ["args['name']", "args['age']"]
+      },
+      "call": {
+        "opts": {
+          "timeout": 100
+        }
+      },
+      "transform": {
+        "id": "get_in(args['rows'], [Access.at(0), Access.at(0)])"
+      },
+      "output": {
+        "id": {"type": "integer"}
+      }
+    },
+    "find": {
+      "input": {
+        "id": {"type": "integer"}
+      },
+      "prepare": {
+        "statement": "SELECT * FROM users WHERE id = $1",
+        "params": ["args['id']"]
+      },
+      "transform": {
+        "id": "get_in(args['rows'], [Access.at(0), Access.at(0)])",
+        "name": "get_in(args['rows'], [Access.at(0), Access.at(1)])",
+        "age": "get_in(args['rows'], [Access.at(0), Access.at(2)])"
+      },
+      "output": {
+        "id": {"type": "integer"},
+        "name": {"type": "string"},
+        "age": {"type": "integer"}
+      }
+    }
+  }
+}
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/octopus_client_postgrex>.
-
