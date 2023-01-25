@@ -2,7 +2,6 @@
   "name": "users",
   "client": {
     "module": "OctopusClientPostgrex",
-    "adapter": "OctopusClientPostgrex.Adapter",
     "start": {
       "host": "localhost",
       "port": "5432",

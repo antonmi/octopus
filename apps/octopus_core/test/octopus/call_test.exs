@@ -3,7 +3,7 @@ defmodule Octopus.CallTest do
 
   alias Octopus.Call
 
-  defmodule Adapter do
+  defmodule Client do
     def call(args, configs, _state) do
       if configs["ok"] do
         {:ok, %{"foo" => args["foo"] <> "bar", "baz" => 1}}
@@ -36,7 +36,7 @@ defmodule Octopus.CallTest do
   describe "call/3 success case" do
     test "success" do
       args = %{"foo" => "the_foo"}
-      {:ok, result} = Call.call(Adapter, args, @interface_configs, %{})
+      {:ok, result} = Call.call(Client, args, @interface_configs, %{})
       assert result == %{"x" => "the_foobazbarxxx", "y" => 2}
     end
   end
@@ -44,14 +44,14 @@ defmodule Octopus.CallTest do
   describe "error cases" do
     test "when input has invalid type" do
       args = %{"foo" => 1}
-      {:error, error} = Call.call(Adapter, args, @interface_configs, %{})
+      {:error, error} = Call.call(Client, args, @interface_configs, %{})
       assert error == [{"Type mismatch. Expected String but got Integer.", "#/foo"}]
     end
 
     test "when input doesn't have required field" do
       interface_configs = put_in(@interface_configs["input"]["required"], ["foo"])
 
-      {:error, error} = Call.call(Adapter, %{}, interface_configs, %{})
+      {:error, error} = Call.call(Client, %{}, interface_configs, %{})
       assert error == [{"Required property foo was not present.", "#"}]
     end
 
@@ -60,13 +60,13 @@ defmodule Octopus.CallTest do
 
       assert_raise(
         ExJsonSchema.Schema.InvalidSchemaError,
-        fn -> Call.call(Adapter, %{}, interface_configs, %{}) end
+        fn -> Call.call(Client, %{}, interface_configs, %{}) end
       )
     end
 
     test "error in output" do
       interface_configs = put_in(@interface_configs["transform"]["y"], "to_string(args['baz'])")
-      {:error, error} = Call.call(Adapter, %{"foo" => "the_foo"}, interface_configs, %{})
+      {:error, error} = Call.call(Client, %{"foo" => "the_foo"}, interface_configs, %{})
       assert error == [{"Type mismatch. Expected Integer but got String.", "#/y"}]
     end
 
@@ -74,7 +74,7 @@ defmodule Octopus.CallTest do
       interface_configs = put_in(@interface_configs["call"]["ok"], false)
 
       assert {:error, :some_error} =
-               Call.call(Adapter, %{"foo" => "the_foo"}, interface_configs, %{})
+               Call.call(Client, %{"foo" => "the_foo"}, interface_configs, %{})
     end
   end
 end

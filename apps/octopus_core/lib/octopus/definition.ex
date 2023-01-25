@@ -26,20 +26,12 @@ defmodule Octopus.Definition do
       |> Utils.modulize()
       |> validate_module_or_raise()
 
-    adapter_name = definition.client["adapter"] || definition.client["module"] <> ".Adapter"
-
-    adapter_module =
-      adapter_name
-      |> Utils.modulize()
-      |> validate_module_or_raise()
-
     template()
     |> EEx.eval_string(
       namespace: namespace(),
       service_module: service_module,
       client_module: client_module,
       client_module_start_config: definition.client["start"],
-      adapter_module: adapter_module,
       interface: definition.interface
     )
     |> eval_code()
@@ -88,7 +80,7 @@ defmodule Octopus.Definition do
                                        |> :erlang.binary_to_term()
 
         def <%= name %>(args) do
-          Octopus.Call.call(<%= adapter_module %>, args, @interface_configs_<%= name %>, state())
+          Octopus.Call.call(<%= client_module %>, args, @interface_configs_<%= name %>, state())
         end
       <% end %>
     end

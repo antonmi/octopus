@@ -2,16 +2,14 @@ defmodule Octopus.GithubServiceTest do
   use ExUnit.Case, async: true
   alias Octopus
 
-  def parse_definition() do
+  def read_definition() do
     path = Path.expand("../definitions", __ENV__.file)
 
-    "#{path}/github.json"
-    |> File.read!()
-    |> Jason.decode!()
+    File.read!("#{path}/github.json")
   end
 
   setup_all do
-    {:ok, "github"} = Octopus.define(parse_definition())
+    {:ok, "github"} = Octopus.define(read_definition())
 
     {:ok, _state} =
       Octopus.start("github", %{

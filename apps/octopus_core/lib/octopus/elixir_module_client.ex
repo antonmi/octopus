@@ -3,19 +3,7 @@ defmodule Octopus.ElixirModuleClient do
      A client for defining elixir modules in runtime.
   """
 
-  defmodule Adapter do
-    def call(args, configs, state) do
-      module = build_module(Map.fetch!(configs, "module"))
-      function = String.to_atom(Map.fetch!(configs, "function"))
-
-      {:ok, Octopus.ElixirModuleClient.call(module, function, args, state)}
-    end
-
-    defp build_module(module_name) do
-      String.to_existing_atom("Elixir.#{module_name}")
-    end
-  end
-
+  @spec start(map(), map()) :: {:ok, String.t()} | no_return()
   def start(args, configs) do
     code = args["code"] || configs["code"]
 
@@ -33,8 +21,16 @@ defmodule Octopus.ElixirModuleClient do
     end
   end
 
-  def call(module, function, args, _state) do
-    apply(module, function, [args])
+  @spec call(map(), map(), any()) :: {:ok, map()} | no_return()
+  def call(args, configs, _state) do
+    module = build_module(Map.fetch!(configs, "module"))
+    function = String.to_atom(Map.fetch!(configs, "function"))
+
+    {:ok, apply(module, function, [args])}
+  end
+
+  defp build_module(module_name) do
+    String.to_existing_atom("Elixir.#{module_name}")
   end
 
   defp eval_code(code) do

@@ -1,47 +1,9 @@
 defmodule OctopusClientPostgrex do
-  defmodule State do
-    @moduledoc false
-    defstruct [:host, :port, :database, :username, :password, :name, :pid]
-
-    @type t :: %__MODULE__{
-            host: String.t(),
-            port: String.t(),
-            database: String.t(),
-            username: String.t(),
-            password: String.t(),
-            name: atom(),
-            pid: pid()
-          }
+  defmodule Error do
+    defexception [:message]
   end
 
-  defmodule Request do
-    @moduledoc false
-    defstruct statement: nil, params: [], opts: []
-
-    @type t :: %__MODULE__{
-            statement: String.t(),
-            params: [],
-            opts: []
-          }
-  end
-
-  defmodule Response do
-    @moduledoc false
-    defstruct columns: nil, num_rows: 0, rows: nil
-
-    @type t :: %__MODULE__{
-            columns: [String.t()] | nil,
-            num_rows: integer(),
-            rows: [[term()] | binary()] | nil
-          }
-  end
-
-  defmodule Adapter do
-    def call(args, configs, state) do
-      OctopusClientPostgrex.call(args, configs, state)
-    end
-  end
-
+  @spec start(map(), map()) :: {:ok, map()} | no_return()
   def start(args, configs) do
     host = args["host"] || configs["host"]
     port = args["port"] || configs["port"]
@@ -67,7 +29,7 @@ defmodule OctopusClientPostgrex do
         {:error, {:already_started, pid}} -> pid
       end
 
-    state = %State{
+    state = %{
       pid: pid,
       name: name,
       host: host,
@@ -80,6 +42,7 @@ defmodule OctopusClientPostgrex do
     {:ok, state}
   end
 
+  @spec call(map(), map(), map()) :: {:ok, map()} | {:error, Error.t()}
   def call(args, configs, state) do
     statement = args["statement"] || configs["statement"]
     params = args["params"] || configs["params"] || []
@@ -90,7 +53,7 @@ defmodule OctopusClientPostgrex do
         {:ok, %{"columns" => columns, "num_rows" => num_rows, "rows" => rows}}
 
       {:error, error} ->
-        {:error, error}
+        {:error, %Error{message: inspect(error)}}
     end
   end
 

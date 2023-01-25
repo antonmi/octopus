@@ -20,16 +20,9 @@ defmodule OctopusTest do
     end
   end
 
-  defmodule Adapter do
-    def call(args, configs, state) do
-      Client.call(args, configs, state)
-    end
-  end
-
   @definition Definitions.read_and_decode("example.json")
               |> put_in(["name"], "my-service")
               |> put_in(["client", "module"], "OctopusTest.Client")
-              |> put_in(["client", "adapter"], "OctopusTest.Adapter")
 
   setup_all do
     {:ok, "my-service"} = Octopus.define(@definition)

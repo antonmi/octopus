@@ -56,7 +56,7 @@ defmodule OctopusClientPostgrexTest do
         "opts" => []
       }
 
-      {:error, %Postgrex.Error{}} = OctopusClientPostgrex.call(args, %{}, state)
+      {:error, %OctopusClientPostgrex.Error{}} = OctopusClientPostgrex.call(args, %{}, state)
     end
   end
 end

@@ -14,12 +14,6 @@ defmodule Octopus.DefinitionTest do
     end
   end
 
-  defmodule Adapter do
-    def call(args, configs, state) do
-      Client.call(args, configs, state)
-    end
-  end
-
   @definition Definitions.read_and_decode("example.json")
               |> put_in(["client", "module"], "Octopus.DefinitionTest.Client")
               |> put_in(["client", "adapter"], "Octopus.DefinitionTest.Adapter")
@@ -88,15 +82,6 @@ defmodule Octopus.DefinitionTest do
       assert_raise Octopus.DefinitionError, "Module 'Client2' doesn't exist!", fn ->
         @definition
         |> put_in(["client", "module"], "Client2")
-        |> Definition.new()
-        |> Definition.define()
-      end
-    end
-
-    test "adapter module doesn't exist" do
-      assert_raise Octopus.DefinitionError, "Module 'Nope' doesn't exist!", fn ->
-        @definition
-        |> put_in(["client", "adapter"], "Nope")
         |> Definition.new()
         |> Definition.define()
       end

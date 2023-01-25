@@ -1,8 +1,6 @@
 defmodule OctopusClientHttpFinchTest do
   use ExUnit.Case
 
-  alias OctopusClientHttpFinch.{Request, Response, State}
-
   @base_url "http://localhost"
   @headers %{"Content-Type" => "application/json"}
 
@@ -10,7 +8,7 @@ defmodule OctopusClientHttpFinchTest do
     setup do
       args = %{"base_url" => @base_url, "headers" => @headers}
       configs = %{"pool_size" => 10}
-      {:ok, %State{} = state} = OctopusClientHttpFinch.start(args, configs)
+      {:ok, state} = OctopusClientHttpFinch.start(args, configs)
       %{state: state}
     end
 
@@ -26,13 +24,20 @@ defmodule OctopusClientHttpFinchTest do
     test "start another client", %{state: state} do
       args = %{"base_url" => @base_url, "headers" => @headers}
       configs = %{"process_name" => "another_client"}
-      {:ok, %State{} = new_state} = OctopusClientHttpFinch.start(args, configs)
+      {:ok, new_state} = OctopusClientHttpFinch.start(args, configs)
       assert Process.alive?(Process.whereis(state.name))
       assert Process.alive?(Process.whereis(new_state.name))
     end
   end
 
-  describe "call" do
+  describe "call/3 with GET" do
+    @args_for_get %{
+      "method" => "GET",
+      "path" => "/path",
+      "params" => %{"a" => 1, "b" => "c"},
+      "headers" => %{"Content-Type" => "application/json"}
+    }
+
     setup do
       bypass = Bypass.open()
 
@@ -42,48 +47,62 @@ defmodule OctopusClientHttpFinchTest do
         "pool_size" => 10
       }
 
-      {:ok, state} = OctopusClientHttpFinch.start(args, %{"process_name" => "test"})
-      %{state: state, bypass: bypass}
+      {:ok, state} = OctopusClientHttpFinch.start(args)
+      %{bypass: bypass, state: state}
     end
 
-    test "call with GET", %{bypass: bypass, state: state} do
+    test "call the client", %{bypass: bypass, state: state} do
       Bypass.expect(bypass, "GET", "/path", fn conn ->
-        assert Enum.member?(conn.req_headers, {"custom", "header"})
-        assert conn.params == %{"a" => "1", "b" => "b"}
-        Plug.Conn.resp(conn, 200, "OK")
+        assert Enum.member?(conn.req_headers, {"content-type", "application/json"})
+        assert conn.params == %{"a" => "1", "b" => "c"}
+        Plug.Conn.resp(conn, 200, Jason.encode!(%{"hello" => "world"}))
       end)
 
-      args = %Request{
-        method: :get,
-        path: "/path",
-        params: %{a: 1, b: "b"},
-        body: "",
-        headers: %{"custom" => "header"}
+      {:ok, result} = OctopusClientHttpFinch.call(@args_for_get, %{}, state)
+
+      decoded_body = Jason.decode!(result["body"])
+      assert decoded_body == %{"hello" => "world"}
+    end
+  end
+
+  describe "call/3 with POST" do
+    @args_for_post %{
+      "method" => "POST",
+      "path" => "/path",
+      "body" => "{\"hello\":\"world\"}",
+      "headers" => %{"Content-Type" => "application/json"}
+    }
+
+    setup do
+      bypass = Bypass.open()
+
+      args = %{
+        "base_url" => "#{@base_url}:#{bypass.port}",
+        "headers" => @headers,
+        "pool_size" => 10
       }
 
-      {:ok, %Response{} = response} = OctopusClientHttpFinch.call(args, state)
-      assert response.status == 200
-      assert response.body == "OK"
-      assert Enum.member?(response.headers, {"content-length", "2"})
+      {:ok, state} = OctopusClientHttpFinch.start(args)
+      %{bypass: bypass, state: state}
     end
 
-    test "call with POST", %{bypass: bypass, state: state} do
+    test "call the client", %{bypass: bypass, state: state} do
       Bypass.expect(bypass, "POST", "/path", fn conn ->
+        assert Enum.member?(conn.req_headers, {"content-length", "17"})
         {:ok, body, conn} = Plug.Conn.read_body(conn)
-        assert body == "body"
-        Plug.Conn.resp(conn, 200, "OK")
+        assert body == "{\"hello\":\"world\"}"
+        Plug.Conn.resp(conn, 200, Jason.encode!(%{"ok" => "ok"}))
       end)
 
-      args = %Request{method: :post, path: "/path", params: %{}, body: "body"}
-      {:ok, %Response{} = response} = OctopusClientHttpFinch.call(args, state)
-      assert response.status == 200
-      assert response.body == "OK"
-      assert Enum.member?(response.headers, {"content-length", "2"})
-    end
+      {:ok, result} = OctopusClientHttpFinch.call(@args_for_post, %{}, state)
 
-    test "500 error", %{state: state} do
-      args = %Request{method: :get, path: "%%%", params: %{}, body: ""}
-      assert {:error, %Mint.HTTPError{}} = OctopusClientHttpFinch.call(args, state)
+      decoded_body = Jason.decode!(result["body"])
+      assert decoded_body == %{"ok" => "ok"}
+
+      {:ok, result} =
+        OctopusClientHttpFinch.call(@args_for_post, %{"parse_json_body" => true}, state)
+
+      assert result["body"] == %{"ok" => "ok"}
     end
   end
 end

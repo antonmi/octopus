@@ -1,16 +1,14 @@
 defmodule Octopus.AgifyServiceTest do
   use ExUnit.Case, async: true
 
-  def parse_definition() do
+  def read_definition() do
     path = Path.expand("../definitions", __ENV__.file)
 
-    "#{path}/agify.json"
-    |> File.read!()
-    |> Jason.decode!()
+    File.read!("#{path}/agify.json")
   end
 
   setup_all do
-    {:ok, "agify"} = Octopus.define(parse_definition())
+    {:ok, "agify"} = Octopus.define(read_definition())
     {:ok, _state} = Octopus.start("agify")
 
     :ok

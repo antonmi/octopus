@@ -1,51 +1,16 @@
 defmodule OctopusClientHttpFinch do
   @moduledoc false
 
-  defmodule State do
-    @moduledoc false
-    defstruct base_url: nil, headers: %{}, pool_size: nil, pid: nil, name: nil
-
-    @type t :: %__MODULE__{
-            base_url: String.t(),
-            headers: map(),
-            pool_size: integer(),
-            pid: pid(),
-            name: atom()
-          }
-  end
-
-  defmodule Request do
-    @moduledoc false
-    defstruct method: :get, path: "/", params: %{}, body: nil, headers: %{}
-
-    @type t :: %__MODULE__{
-            method: atom(),
-            path: String.t(),
-            params: map(),
-            body: String.t(),
-            headers: map()
-          }
-  end
-
-  defmodule Response do
-    @moduledoc false
-    defstruct status: nil, body: nil, headers: []
-
-    @type t :: %__MODULE__{
-            status: integer(),
-            body: String.t(),
-            headers: map()
-          }
-  end
-
   @default_pool_size 10
 
-  @spec start(map(), map()) :: {:ok, State.t()}
+  @spec start(map(), map()) :: {:ok, map()}
   def start(args, configs \\ %{}) do
     base_url = args["base_url"] || configs["base_url"]
     headers = Map.merge(configs["headers"] || %{}, args["headers"] || %{})
     pool_size = args["pool_size"] || configs["pool_size"] || @default_pool_size
-    name = String.to_atom(args["process_name"] || configs["process_name"] || generate_process_name())
+
+    name =
+      String.to_atom(args["process_name"] || configs["process_name"] || generate_process_name())
 
     spec = {Finch, name: name, pools: %{base_url => [size: pool_size]}}
 
@@ -55,7 +20,7 @@ defmodule OctopusClientHttpFinch do
         {:error, {:already_started, pid}} -> pid
       end
 
-    state = %State{
+    state = %{
       pid: pid,
       name: name,
       base_url: base_url,
@@ -66,8 +31,50 @@ defmodule OctopusClientHttpFinch do
     {:ok, state}
   end
 
-  @spec call(Request.t(), State.t()) :: {:ok, Response.t()} | {:error, Error.t()}
-  def call(%Request{} = request, %State{} = state) do
+  @spec call(map(), map(), term()) :: map()
+  def call(args, configs, state) do
+    method = method_to_atom(args["method"])
+    headers = args["headers"] || %{}
+
+    cond do
+      method in [:get, :head, :delete, :options] ->
+        %{
+          method: method,
+          path: args["path"] || "/",
+          params: args["params"] || %{},
+          headers: headers,
+          body: nil
+        }
+        |> do_call(configs, state)
+
+      method in [:post, :put, :patch] ->
+        headers = Map.put(headers, "Content-Length", "#{byte_size(args["body"])}")
+
+        %{
+          method: method,
+          path: args["path"] || "/",
+          params: args["params"] || %{},
+          body: args["body"] || "",
+          headers: headers
+        }
+        |> do_call(configs, state)
+    end
+  end
+
+  defp do_call(request, configs, state) do
+    case finch_call(request, state) do
+      {:ok, %{body: body} = response} ->
+        headers = response.headers |> Enum.into(%{})
+        body = if configs["parse_json_body"], do: Jason.decode!(body), else: body
+        status = response.status
+        {:ok, %{"status" => status, "headers" => headers, "body" => body}}
+
+      {:error, error} ->
+        {:error, error}
+    end
+  end
+
+  defp finch_call(request, state) do
     url = build_url(state.base_url, request.path, request.params)
     headers = headers_to_list(Map.merge(state.headers, request.headers))
 
@@ -76,14 +83,14 @@ defmodule OctopusClientHttpFinch do
     |> Finch.request(state.name)
     |> case do
       {:ok, %Finch.Response{status: status, body: body, headers: headers}} ->
-        {:ok, %Response{status: status, body: body, headers: headers}}
+        {:ok, %{status: status, body: body, headers: headers}}
 
       {:error, error} ->
         {:error, error}
     end
   end
 
-  def generate_process_name() do
+  defp generate_process_name() do
     timestamp = DateTime.utc_now() |> DateTime.to_unix()
     "#{__MODULE__}#{timestamp}"
   end
@@ -93,6 +100,19 @@ defmodule OctopusClientHttpFinch do
     |> URI.parse()
     |> Map.put(:path, prefix_with_slash_if_needed(path))
     |> Map.put(:query, URI.encode_query(params))
+  end
+
+  defp method_to_atom(method) when is_atom(method) do
+    method
+    |> Atom.to_string()
+    |> String.replace("Elixir.", "")
+    |> method_to_atom()
+  end
+
+  defp method_to_atom(method) when is_binary(method) do
+    method
+    |> String.downcase()
+    |> String.to_atom()
   end
 
   defp headers_to_list(headers) do
