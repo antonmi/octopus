@@ -2,7 +2,7 @@
   "name": "github",
   "client": {
     "module": "OctopusClientHttpFinch",
-    "start": {
+    "init": {
       "base_url": "https://api.github.com",
         "headers": {
           "Accept": "application/vnd.github+json"

@@ -3,8 +3,8 @@ defmodule OctopusClientPostgrex do
     defexception [:message]
   end
 
-  @spec start(map(), map()) :: {:ok, map()} | no_return()
-  def start(args, configs) do
+  @spec init(map(), map()) :: {:ok, map()} | no_return()
+  def init(args, configs) do
     host = args["host"] || configs["host"]
     port = args["port"] || configs["port"]
     database = args["database"] || configs["database"]

@@ -34,11 +34,11 @@ defmodule OctopusAgent.Router do
     end
   end
 
-  post "/start/:name" do
+  post "/init/:name" do
     {:ok, body, conn} = read_body(conn)
     map = Jason.decode!(body)
 
-    case Octopus.start(conn.params["name"], map) do
+    case Octopus.init(conn.params["name"], map) do
       {:ok, state} ->
         send_resp(conn, 200, Jason.encode!(state))
 

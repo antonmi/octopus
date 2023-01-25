@@ -9,7 +9,7 @@ defmodule Octopus.AgifyServiceTest do
 
   setup_all do
     {:ok, "agify"} = Octopus.define(read_definition())
-    {:ok, _state} = Octopus.start("agify")
+    {:ok, _state} = Octopus.init("agify")
 
     :ok
   end

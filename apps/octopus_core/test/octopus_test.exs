@@ -3,7 +3,7 @@ defmodule OctopusTest do
   alias Octopus.Test.Definitions
 
   defmodule Client do
-    def start(args, configs) do
+    def init(args, configs) do
       if args["fail"] do
         raise args["fail"]
       end
@@ -30,9 +30,9 @@ defmodule OctopusTest do
     :ok
   end
 
-  describe "start/1" do
+  describe "init/1" do
     test "state" do
-      {:ok, state} = Octopus.start("my-service", %{"a" => "b"})
+      {:ok, state} = Octopus.init("my-service", %{"a" => "b"})
 
       assert state == %{
                "state" => "here",
@@ -43,11 +43,11 @@ defmodule OctopusTest do
 
     test "starting non-existent service" do
       assert {:error, "Module 'Elixir.Octopus.Services.NonExistentService' doesn't exist!"} =
-               Octopus.start("non-existent-service", %{})
+               Octopus.init("non-existent-service", %{})
     end
 
     test "smth went wrong" do
-      assert {:error, "oops"} = Octopus.start("my-service", %{"fail" => "oops"})
+      assert {:error, "oops"} = Octopus.init("my-service", %{"fail" => "oops"})
     end
   end
 

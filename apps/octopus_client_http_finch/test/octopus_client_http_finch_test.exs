@@ -4,11 +4,11 @@ defmodule OctopusClientHttpFinchTest do
   @base_url "http://localhost"
   @headers %{"Content-Type" => "application/json"}
 
-  describe "start/1" do
+  describe "init/1" do
     setup do
       args = %{"base_url" => @base_url, "headers" => @headers}
       configs = %{"pool_size" => 10}
-      {:ok, state} = OctopusClientHttpFinch.start(args, configs)
+      {:ok, state} = OctopusClientHttpFinch.init(args, configs)
       %{state: state}
     end
 
@@ -21,10 +21,10 @@ defmodule OctopusClientHttpFinchTest do
       assert state.name
     end
 
-    test "start another client", %{state: state} do
+    test "init another client", %{state: state} do
       args = %{"base_url" => @base_url, "headers" => @headers}
       configs = %{"process_name" => "another_client"}
-      {:ok, new_state} = OctopusClientHttpFinch.start(args, configs)
+      {:ok, new_state} = OctopusClientHttpFinch.init(args, configs)
       assert Process.alive?(Process.whereis(state.name))
       assert Process.alive?(Process.whereis(new_state.name))
     end
@@ -47,7 +47,7 @@ defmodule OctopusClientHttpFinchTest do
         "pool_size" => 10
       }
 
-      {:ok, state} = OctopusClientHttpFinch.start(args)
+      {:ok, state} = OctopusClientHttpFinch.init(args)
       %{bypass: bypass, state: state}
     end
 
@@ -82,7 +82,7 @@ defmodule OctopusClientHttpFinchTest do
         "pool_size" => 10
       }
 
-      {:ok, state} = OctopusClientHttpFinch.start(args)
+      {:ok, state} = OctopusClientHttpFinch.init(args)
       %{bypass: bypass, state: state}
     end
 

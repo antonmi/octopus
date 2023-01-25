@@ -18,10 +18,10 @@ defmodule Octopus do
       {:error, error.message}
   end
 
-  @spec start(String.t(), map()) :: {:ok, map()} | no_return()
-  def start(service_name, args \\ %{}) when is_binary(service_name) and is_map(args) do
+  @spec init(String.t(), map()) :: {:ok, map()} | no_return()
+  def init(service_name, args \\ %{}) when is_binary(service_name) and is_map(args) do
     module = build_module(service_name)
-    apply(module, :start, [args])
+    apply(module, :init, [args])
   rescue
     error ->
       {:error, error.message}

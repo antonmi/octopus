@@ -9,7 +9,7 @@ defmodule OctopusClientCliRamboTest do
 
   setup_all do
     {:ok, "files"} = Octopus.define(read_definition())
-    {:ok, _state} = Octopus.start("files")
+    {:ok, _state} = Octopus.init("files")
 
     :ok
   end

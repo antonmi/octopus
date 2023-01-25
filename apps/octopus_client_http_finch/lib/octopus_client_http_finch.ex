@@ -3,8 +3,8 @@ defmodule OctopusClientHttpFinch do
 
   @default_pool_size 10
 
-  @spec start(map(), map()) :: {:ok, map()}
-  def start(args, configs \\ %{}) do
+  @spec init(map(), map()) :: {:ok, map()}
+  def init(args, configs \\ %{}) do
     base_url = args["base_url"] || configs["base_url"]
     headers = Map.merge(configs["headers"] || %{}, args["headers"] || %{})
     pool_size = args["pool_size"] || configs["pool_size"] || @default_pool_size

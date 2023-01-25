@@ -8,10 +8,10 @@ defmodule OctopusClientPostgrexTest do
     "password" => "postgres"
   }
 
-  describe "start" do
+  describe "init" do
     setup do
       args = %{"database" => "octopus_test", "process_name" => "postgres_client"}
-      {:ok, state} = OctopusClientPostgrex.start(args, @configs)
+      {:ok, state} = OctopusClientPostgrex.init(args, @configs)
       %{state: state}
     end
 
@@ -24,9 +24,9 @@ defmodule OctopusClientPostgrexTest do
       assert state.password == "postgres"
     end
 
-    test "start another client" do
+    test "init another client" do
       args = %{"database" => "octopus_test", "process_name" => "postgres_client2"}
-      {:ok, state} = OctopusClientPostgrex.start(args, @configs)
+      {:ok, state} = OctopusClientPostgrex.init(args, @configs)
       assert state.name == :postgres_client2
     end
   end
@@ -34,7 +34,7 @@ defmodule OctopusClientPostgrexTest do
   describe "call" do
     setup do
       args = %{"database" => "octopus_test", "process_name" => "my_postgres_client"}
-      {:ok, state} = OctopusClientPostgrex.start(args, @configs)
+      {:ok, state} = OctopusClientPostgrex.init(args, @configs)
       %{state: state}
     end
 

@@ -1,6 +1,6 @@
 defmodule OctopusClientCliRambo do
-  @spec start(map(), map()) :: {:ok, map()}
-  def start(_args, _configs \\ %{}) do
+  @spec init(map(), map()) :: {:ok, map()}
+  def init(_args, _configs \\ %{}) do
     {:ok, %{}}
   end
 

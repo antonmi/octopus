@@ -12,7 +12,7 @@ defmodule Octopus.ElixirModuleExampleTest do
     definition_map = parse_definition()
     definition = Definition.new(definition_map)
     Definition.define(definition)
-    {:ok, _code} = apply(@service_module, :start, [])
+    {:ok, _code} = apply(@service_module, :init, [])
 
     assert apply(TheModule, :hello, [%{"name" => "world"}]) == "Hello world"
 
@@ -23,7 +23,7 @@ defmodule Octopus.ElixirModuleExampleTest do
     assert result == %{"result" => 3}
   end
 
-  test "start with custom code" do
+  test "init with custom code" do
     definition_map =
       parse_definition()
       |> put_in(["name"], "another-service")
@@ -44,7 +44,7 @@ defmodule Octopus.ElixirModuleExampleTest do
 
     service_module = Octopus.Services.AnotherService
 
-    {:ok, _code} = apply(service_module, :start, [start_args])
+    {:ok, _code} = apply(service_module, :init, [start_args])
     {:ok, result} = apply(service_module, :hello, [%{"name" => "world"}])
     assert result == %{"greeting" => "Hello world!!!"}
   end

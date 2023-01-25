@@ -6,7 +6,7 @@ defmodule OctopusAgent.RequestsTest do
   alias OctopusAgent.Test.Definitions
 
   defmodule Client do
-    def start(args, configs) do
+    def init(args, configs) do
       {:ok, %{"state" => "here", "args" => args, "configs" => configs}}
     end
 
@@ -52,10 +52,10 @@ defmodule OctopusAgent.RequestsTest do
       assert Jason.decode!(conn.resp_body) == %{"error" => "Module 'NoSuchModule' doesn't exist!"}
     end
 
-    test "start and call service" do
+    test "init and call service" do
       conn =
         :post
-        |> conn("/start/example-service", Jason.encode!(%{"a" => "b"}))
+        |> conn("/init/example-service", Jason.encode!(%{"a" => "b"}))
         |> Router.call(%{})
 
       assert conn.status == 200

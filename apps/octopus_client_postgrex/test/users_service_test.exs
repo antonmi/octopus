@@ -9,7 +9,7 @@ defmodule OctopusClientPostgrex.UsersServiceTest do
 
   setup_all do
     {:ok, "users"} = Octopus.define(read_definition())
-    {:ok, _state} = Octopus.start("users")
+    {:ok, _state} = Octopus.init("users")
 
     :ok
   end

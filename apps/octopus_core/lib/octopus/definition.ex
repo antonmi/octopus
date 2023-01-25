@@ -31,7 +31,7 @@ defmodule Octopus.Definition do
       namespace: namespace(),
       service_module: service_module,
       client_module: client_module,
-      client_module_start_config: definition.client["start"],
+      client_module_init_config: definition.client["init"],
       interface: definition.interface
     )
     |> eval_code()
@@ -52,12 +52,12 @@ defmodule Octopus.Definition do
     defmodule <%= namespace %>.<%= service_module %> do
       def ok?, do: true
 
-      @start_configs "<%= Base.encode64(:erlang.term_to_binary(client_module_start_config)) %>"
+      @start_configs "<%= Base.encode64(:erlang.term_to_binary(client_module_init_config)) %>"
                      |> Base.decode64!()
                      |> :erlang.binary_to_term()
 
-      def start(args \\\\ %{}) do
-        case <%= client_module %>.start(args, @start_configs) do
+      def init(args \\\\ %{}) do
+        case <%= client_module %>.init(args, @start_configs) do
           {:ok, state} ->
             Octopus.Definition.define_state(__MODULE__, state)
             {:ok, state}
