@@ -1,5 +1,6 @@
 defmodule Octopus.EvalTest do
   use ExUnit.Case, async: true
+  import ExUnit.CaptureLog
 
   test "eval_string" do
     assert Octopus.Eval.eval_string("1 + 1", []) == 2
@@ -7,8 +8,26 @@ defmodule Octopus.EvalTest do
 
   test "it does not allow calling external functions" do
     string = "File.read(\"/etc/passwd\")"
-    result = Octopus.Eval.eval_string(string, [])
-    assert result == string
+
+    capture_log(fn ->
+      result = Octopus.Eval.eval_string(string, [])
+      assert result == string
+    end) =~ "[error]"
+  end
+
+  test "it allows Access module" do
+    args = %{"list" => [1, 2, 3]}
+    result = Octopus.Eval.eval_string("get_in(args['list'], [Access.at(1)])", args: args)
+    assert result == 2
+
+    args = %{"user" => %{"name" => "Anton"}}
+
+    result =
+      Octopus.Eval.eval_string("get_in(args, [Access.key('user'), Access.key('name')])",
+        args: args
+      )
+
+    assert result == "Anton"
   end
 
   test "with variables" do
@@ -24,7 +43,9 @@ defmodule Octopus.EvalTest do
   end
 
   test "eval string without code" do
-    assert Octopus.Eval.eval_string("my_string", []) == "my_string"
+    capture_log(fn ->
+      assert Octopus.Eval.eval_string("my_string", []) == "my_string"
+    end) =~ "[error]"
   end
 
   test "for non string" do

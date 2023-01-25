@@ -2,7 +2,14 @@ defmodule Octopus do
   alias Octopus.{Configs, Definition, Utils}
 
   @spec define(map()) :: {:ok, String.t()} | no_return()
-  def define(definition) do
+  def define(definition) when is_binary(definition) do
+    definition
+    |> Jason.decode!()
+    |> define()
+  end
+
+  @spec define(String.t()) :: {:ok, String.t()} | no_return()
+  def define(definition) when is_map(definition) do
     definition
     |> Definition.new()
     |> Definition.define()

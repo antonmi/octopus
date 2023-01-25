@@ -33,6 +33,12 @@ defmodule Octopus.TransformTest do
              }
     end
 
+    test "with Access module" do
+      args = %{"list" => [1, 2, 3]}
+      config = %{"second" => "get_in(args['list'], [Access.at(1)])"}
+      assert {:ok, %{"second" => 2}} = Transform.transform(args, config)
+    end
+
     test "with config == false" do
       args = %{"foo" => "bar", "baz" => 1, "h" => "haha"}
       assert {:ok, ^args} = Transform.transform(args, false)

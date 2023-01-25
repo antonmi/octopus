@@ -1,8 +1,11 @@
 defmodule Octopus.Eval do
+  require Logger
+
   def eval_string(string, args) when is_binary(string) do
     do_eval_string(string, args)
   rescue
-    _error ->
+    error ->
+      Logger.error(inspect(error))
       string
   end
 
@@ -25,6 +28,9 @@ defmodule Octopus.Eval do
     ast
     |> Macro.prewalk(fn
       {{:., _, [Access, _]}, _, _} = code ->
+        code
+
+      {{:., _, [{:__aliases__, [line: 1], [:Access]}, _]}, _, _} = code ->
         code
 
       {{:., _, _}, _, _} = bad ->
