@@ -1,4 +1,7 @@
 defmodule Octopus.Validate do
+  @moduledoc """
+  Validates input and output with ExJsonSchema.Validator
+  """
   alias ExJsonSchema.Validator
 
   @spec validate(map(), map()) :: {:ok, map()} | {:error, any()}

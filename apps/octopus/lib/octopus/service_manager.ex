@@ -1,4 +1,6 @@
 defmodule Octopus.ServiceManager do
+  @moduledoc false
+
   use GenServer
 
   defstruct services: MapSet.new(),

@@ -3,9 +3,13 @@ defmodule Octopus.DefinitionError do
 end
 
 defmodule Octopus.Definition do
+  @moduledoc """
+  Compiles the interface definition into a module.
+  """
   alias Octopus.{Configs, DefinitionError, Utils}
   defstruct [:name, :client, :interface]
 
+  @spec new(map()) :: %Octopus.Definition{} | no_return()
   def new(definition) do
     name = definition["name"] || raise DefinitionError, "Missing service name!"
     client = definition["client"] || raise DefinitionError, "Missing client definition!"
@@ -18,6 +22,7 @@ defmodule Octopus.Definition do
     }
   end
 
+  @spec define(map()) :: {:ok, String.t()} | no_return()
   def define(definition) do
     service_module = Utils.modulize(definition.name)
 
@@ -41,6 +46,7 @@ defmodule Octopus.Definition do
     end
   end
 
+  @spec define_state(atom(), any()) :: {:ok, String.t()} | no_return()
   def define_state(module, state) do
     template_for_state()
     |> EEx.eval_string(module: module, state: state)

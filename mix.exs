@@ -1,4 +1,4 @@
-defmodule Octopus.MixProject do
+defmodule OctopusProject.MixProject do
   use Mix.Project
 
   def project do

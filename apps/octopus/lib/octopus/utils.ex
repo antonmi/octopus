@@ -1,4 +1,6 @@
 defmodule Octopus.Utils do
+  @moduledoc false
+
   def modulize(string) do
     string
     |> String.replace("-", "_")

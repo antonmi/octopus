@@ -1,10 +1,10 @@
-defmodule OctopusOld.MixProject do
+defmodule Octopus.MixProject do
   use Mix.Project
 
   def project do
     [
       app: :octopus,
-      version: "0.1.1",
+      version: "0.2.0",
       elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -15,15 +15,15 @@ defmodule OctopusOld.MixProject do
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :eex]
+      extra_applications: [:eex, :logger],
+      mod: {Octopus.Application, []}
     ]
   end
 
   defp description do
-    "Declarative interface mapping"
+    "Declarative Interface Translation"
   end
 
   defp package do
@@ -35,8 +35,10 @@ defmodule OctopusOld.MixProject do
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
-    []
+    [
+      {:ex_json_schema, "~> 0.9"},
+      {:jason, "~> 1.4"}
+    ]
   end
 end

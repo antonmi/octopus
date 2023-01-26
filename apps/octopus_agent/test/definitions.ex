@@ -8,8 +8,8 @@ defmodule OctopusAgent.Test.Definitions do
     |> Jason.encode!()
   end
 
-  def read_from_octopus_core(file) do
-    path = Path.expand("../../../octopus_core/test/definitions", __ENV__.file)
+  def read_from_octopus(file) do
+    path = Path.expand("../../../octopus/test/definitions", __ENV__.file)
 
     "#{path}/#{file}"
     |> File.read!()

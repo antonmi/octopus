@@ -1,4 +1,8 @@
 defmodule Octopus.Call do
+  @moduledoc """
+  Implements the call/4 function for the generated modules.
+  See Octopus.Definition.
+  """
   alias Octopus.{Transform, Validate}
 
   @spec call(atom(), map(), map(), any()) :: {:ok, map()} | {:error, any()}

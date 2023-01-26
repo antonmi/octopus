@@ -22,7 +22,7 @@ defmodule OctopusClientHttpFinch.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:octopus_core, in_umbrella: true},
+      {:octopus, in_umbrella: true},
       {:finch, "~> 0.13"},
       {:jason, "~> 1.4"},
       {:bypass, "~> 2.1", only: :test}

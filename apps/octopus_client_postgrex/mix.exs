@@ -26,7 +26,7 @@ defmodule OctopusClientPostgrex.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:octopus_core, in_umbrella: true},
+      {:octopus, in_umbrella: true},
       {:postgrex, "~> 0.16"}
     ]
   end

@@ -1,4 +1,7 @@
 defmodule Octopus.Transform do
+  @moduledoc """
+  Transforms the arguments according to the given configuration in "prepare" and "transform".
+  """
   alias Octopus.Eval
 
   def transform(args, config, helpers \\ [])

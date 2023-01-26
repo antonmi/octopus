@@ -1,6 +1,11 @@
 defmodule Octopus.Eval do
+  @moduledoc """
+  Evaluates strings with Elixir code. Used in Transform module.
+  """
+
   require Logger
 
+  @spec eval_string(String.t(), Keyword.t()) :: any() | String.t()
   def eval_string(string, args) when is_binary(string) do
     do_eval_string(string, args)
   rescue

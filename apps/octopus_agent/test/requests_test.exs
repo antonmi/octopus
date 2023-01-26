@@ -15,7 +15,7 @@ defmodule OctopusAgent.RequestsTest do
     end
   end
 
-  @definition Definitions.read_from_octopus_core("example.json")
+  @definition Definitions.read_from_octopus("example.json")
               |> Jason.decode!()
               |> put_in(["client", "module"], "OctopusAgent.RequestsTest.Client")
               |> Jason.encode!()

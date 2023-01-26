@@ -1,3 +1,0 @@
-# OctopusCore
-
-**Core Octopus functionality**

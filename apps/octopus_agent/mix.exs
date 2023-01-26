@@ -20,7 +20,7 @@ defmodule OctopusAgent.MixProject do
 
   defp deps do
     [
-      {:octopus_core, in_umbrella: true},
+      {:octopus, in_umbrella: true},
       {:plug_cowboy, "~> 2.5"},
       {:jason, "~> 1.4"}
     ]

@@ -17,6 +17,6 @@ defmodule OctopusClientCliRamboTest do
   test "ls" do
     {:ok, result} = Octopus.call("files", "ls", %{"path" => ".."})
     assert result["status"] == 0
-    assert Enum.member?(result["output"], "octopus_core")
+    assert Enum.member?(result["output"], "octopus")
   end
 end
