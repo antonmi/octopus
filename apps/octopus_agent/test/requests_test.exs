@@ -68,7 +68,7 @@ defmodule OctopusAgent.RequestsTest do
 
       conn =
         :post
-        |> conn("/services/example-service/my_function", Jason.encode!(%{"in" => "in"}))
+        |> conn("/call/example-service/my_function", Jason.encode!(%{"in" => "in"}))
         |> Router.call(%{})
 
       assert conn.status == 200

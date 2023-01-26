@@ -3,12 +3,6 @@ defmodule OctopusAgent.Router do
 
   alias Api.Definition
 
-  plug(Plug.Parsers,
-    parsers: [:urlencoded, :multipart, :json],
-    pass: ["*/*"],
-    json_decoder: Jason
-  )
-
   plug(Plug.Logger, log: :debug)
   plug(:match)
   plug(:dispatch)
@@ -47,7 +41,7 @@ defmodule OctopusAgent.Router do
     end
   end
 
-  post "services/:name/:function" do
+  post "call/:name/:function" do
     {:ok, body, conn} = read_body(conn)
     map = Jason.decode!(body)
 

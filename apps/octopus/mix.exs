@@ -7,7 +7,6 @@ defmodule Octopus.MixProject do
       version: "0.2.0",
       elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
-      deps: deps(),
       description: description(),
       package: package(),
       source_url: "https://github.com/antonmi/octopus",
@@ -38,7 +37,8 @@ defmodule Octopus.MixProject do
   defp deps do
     [
       {:ex_json_schema, "~> 0.9"},
-      {:jason, "~> 1.4"}
+      {:jason, "~> 1.4"},
+      {:ex_doc, "~> 0.29", only: :dev, runtime: false}
     ]
   end
 end

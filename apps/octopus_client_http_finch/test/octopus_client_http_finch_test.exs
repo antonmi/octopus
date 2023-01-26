@@ -13,12 +13,11 @@ defmodule OctopusClientHttpFinchTest do
     end
 
     test "checks the state", %{state: state} do
-      assert Process.alive?(state.pid)
+      assert Process.alive?(Process.whereis(state.name))
       assert state.base_url == @base_url
       assert state.headers == %{"Content-Type" => "application/json"}
       assert state.pool_size == 10
       assert state.pid != nil
-      assert state.name
     end
 
     test "init another client", %{state: state} do

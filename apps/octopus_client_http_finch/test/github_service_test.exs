@@ -10,20 +10,16 @@ defmodule Octopus.GithubServiceTest do
 
   setup_all do
     {:ok, "github"} = Octopus.define(read_definition())
-
-    {:ok, _state} =
-      Octopus.init("github", %{
-        "headers" => %{"Authorization" => "Bearer #{System.get_env("GITHUB_TOKEN")}"}
-      })
+    {:ok, _state} = Octopus.init("github")
 
     :ok
   end
 
   test "find_users" do
     {:ok, results} = Octopus.call("github", "find_users", %{"username" => "antonmi"})
-    assert %{"total_count" => number, "users" => users} = results
+    assert %{"total_count" => number, "usernames" => usernames} = results
     assert number > 0
-    assert length(users) > 0
+    assert Enum.member?(usernames, "antonmi")
   end
 
   test "get_followers" do

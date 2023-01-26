@@ -21,7 +21,7 @@ defmodule OctopusClientHttpFinch do
       end
 
     state = %{
-      pid: pid,
+      pid: inspect(pid),
       name: name,
       base_url: base_url,
       headers: headers,

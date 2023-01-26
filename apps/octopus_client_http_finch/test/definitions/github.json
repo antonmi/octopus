@@ -28,11 +28,11 @@
       },
       "transform": {
         "total_count": "get_in(args, ['body', 'total_count'])",
-        "users": "get_in(args, ['body', 'items'])"
+        "usernames": "get_in(args, ['body', 'items', Access.all(), 'login'])"
       },
       "output": {
         "total_count": {"type": "integer"},
-        "users": {"type": "array"}
+        "usernames": {"type": "array"}
       }
     },
     "get_followers": {
