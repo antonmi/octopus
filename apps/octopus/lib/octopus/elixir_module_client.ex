@@ -3,8 +3,8 @@ defmodule Octopus.ElixirModuleClient do
      A client for defining elixir modules in runtime.
   """
 
-  @spec init(map(), map(), map()) :: {:ok, String.t()} | no_return()
-  def init(args, configs, _service_name) do
+  @spec start(map(), map(), map()) :: {:ok, String.t()} | no_return()
+  def start(args, configs, _service_name) do
     code = args["code"] || configs["code"]
 
     case code do

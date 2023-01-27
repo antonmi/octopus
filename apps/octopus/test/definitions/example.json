@@ -2,7 +2,7 @@
   "name": "example-service",
   "client": {
     "module": "todo",
-    "init": {
+    "start": {
       "foo": "bar",
       "baz": 10
     }

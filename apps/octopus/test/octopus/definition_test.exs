@@ -5,7 +5,7 @@ defmodule Octopus.DefinitionTest do
   alias Octopus.Test.Definitions
 
   defmodule Client do
-    def init(args, configs, _service_name) do
+    def start(args, configs, _service_name) do
       {:ok, %{"state" => "here", "args" => args, "configs" => configs}}
     end
 
@@ -37,9 +37,9 @@ defmodule Octopus.DefinitionTest do
     assert apply(@service_module, :ok?, [])
   end
 
-  describe "init/1" do
+  describe "start/1" do
     setup do
-      {:ok, state} = apply(@service_module, :init, [%{"a" => "b"}])
+      {:ok, state} = apply(@service_module, :start, [%{"a" => "b"}])
 
       %{state: state}
     end

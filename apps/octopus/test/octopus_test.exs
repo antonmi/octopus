@@ -3,7 +3,7 @@ defmodule OctopusTest do
   alias Octopus.Test.Definitions
 
   defmodule Client do
-    def init(args, _configs, service_module) do
+    def start(args, _configs, service_module) do
       if args["fail"] do
         raise args["fail"]
       end
@@ -60,26 +60,26 @@ defmodule OctopusTest do
     end
   end
 
-  describe "init" do
+  describe "start" do
     test "when status is :undefined" do
-      assert {:error, :undefined} = Octopus.init("my-service")
+      assert {:error, :undefined} = Octopus.start("my-service")
     end
 
     test "define and start" do
       {:ok, "my-service"} = Octopus.define(@definition)
 
-      assert {:ok, state} = Octopus.init("my-service")
+      assert {:ok, state} = Octopus.start("my-service")
       assert state["name"] == Octopus.Services.MyService
       assert Process.alive?(state["pid"])
 
-      assert {:error, :already_started} = Octopus.init("my-service")
+      assert {:error, :already_started} = Octopus.start("my-service")
     end
 
-    test "when error during init" do
+    test "when error during start" do
       {:ok, "my-service"} = Octopus.define(@definition)
 
       assert {:error, "%RuntimeError{message: \"boom!\"}"} =
-               Octopus.init("my-service", %{"fail" => "boom!"})
+               Octopus.start("my-service", %{"fail" => "boom!"})
     end
   end
 
@@ -95,7 +95,7 @@ defmodule OctopusTest do
 
     test "when :ready" do
       {:ok, "my-service"} = Octopus.define(@definition)
-      assert {:ok, _state} = Octopus.init("my-service")
+      assert {:ok, _state} = Octopus.start("my-service")
 
       assert {:ok, %{"out" => "inbaz"}} =
                Octopus.call("my-service", "my_function", %{"in" => "in"})
@@ -103,7 +103,7 @@ defmodule OctopusTest do
 
     test "when fails" do
       {:ok, "my-service"} = Octopus.define(@definition)
-      assert {:ok, _state} = Octopus.init("my-service")
+      assert {:ok, _state} = Octopus.start("my-service")
 
       assert {:error, %RuntimeError{__exception__: true, message: "fail"}} =
                Octopus.call("my-service", "my_function", %{"in" => "fail"})
@@ -122,7 +122,7 @@ defmodule OctopusTest do
 
     test "when :ready" do
       {:ok, "my-service"} = Octopus.define(@definition)
-      assert {:ok, state} = Octopus.init("my-service")
+      assert {:ok, state} = Octopus.start("my-service")
       assert :ok = Octopus.stop("my-service")
       refute Process.alive?(state["pid"])
       assert Octopus.status("my-service") == :not_ready
@@ -141,7 +141,7 @@ defmodule OctopusTest do
 
     test "when :ready" do
       {:ok, "my-service"} = Octopus.define(@definition)
-      assert {:ok, state} = Octopus.init("my-service")
+      assert {:ok, state} = Octopus.start("my-service")
       assert {:ok, new_state} = Octopus.restart("my-service")
       assert Process.alive?(new_state["pid"])
       refute Process.alive?(state["pid"])
@@ -165,7 +165,7 @@ defmodule OctopusTest do
 
     test "when :ready" do
       {:ok, "my-service"} = Octopus.define(@definition)
-      assert {:ok, state} = Octopus.init("my-service")
+      assert {:ok, state} = Octopus.start("my-service")
       assert Octopus.status("my-service") == :ready
       :ok = Octopus.delete("my-service")
       assert Octopus.status("my-service") == :undefined

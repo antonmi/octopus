@@ -32,15 +32,15 @@ defmodule Octopus do
       {:error, error}
   end
 
-  @spec init(String.t(), map()) :: {:ok, map()} | {:error, any}
-  def init(service_name, args \\ %{}) when is_binary(service_name) and is_map(args) do
+  @spec start(String.t(), map()) :: {:ok, map()} | {:error, any}
+  def start(service_name, args \\ %{}) when is_binary(service_name) and is_map(args) do
     case status(service_name) do
       :undefined ->
         {:error, :undefined}
 
       :not_ready ->
         {:ok, module} = build_module(service_name)
-        apply(module, :init, [args])
+        apply(module, :start, [args])
 
       :ready ->
         {:error, :already_started}
@@ -99,7 +99,7 @@ defmodule Octopus do
       :ready ->
         {:ok, module} = build_module(service_name)
         :ok = apply(module, :stop, [args])
-        apply(module, :init, [args])
+        apply(module, :start, [args])
     end
   rescue
     error ->

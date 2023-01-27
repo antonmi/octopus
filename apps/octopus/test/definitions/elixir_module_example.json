@@ -2,7 +2,7 @@
   "name": "elixir-module-service",
   "client": {
     "module": "octopus.elixir-module-client",
-    "init": {
+    "start": {
       "code": [
         "defmodule TheModule do",
         "def hello(%{\"name\" => name}) do",
