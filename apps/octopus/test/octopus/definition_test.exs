@@ -5,12 +5,16 @@ defmodule Octopus.DefinitionTest do
   alias Octopus.Test.Definitions
 
   defmodule Client do
-    def init(args, configs) do
+    def init(args, configs, _service_name) do
       {:ok, %{"state" => "here", "args" => args, "configs" => configs}}
     end
 
     def call(%{"foo" => foo}, _configs, _state) do
       {:ok, %{"bar" => foo <> "baz"}}
+    end
+
+    def stop(_args, _configs, _state) do
+      :ok
     end
   end
 
@@ -51,26 +55,9 @@ defmodule Octopus.DefinitionTest do
     end
   end
 
-  describe "interface" do
-    test "my_function/1" do
-      {:ok, result} = apply(@service_module, :my_function, [%{"in" => "in"}])
-      assert result == %{"out" => "inbaz"}
-    end
-
-    test "simple/1" do
-      {:ok, result} = apply(@service_module, :simple, [%{"foo" => "foo"}])
-      assert result == %{"bar" => "foobaz"}
-    end
-
-    test "empty/1" do
-      {:ok, result} = apply(@service_module, :empty, [%{"foo" => "foo"}])
-      assert result == %{"bar" => "foobaz"}
-    end
-  end
-
   describe "invalid definition" do
     test "missing service name" do
-      assert_raise Octopus.DefinitionError, "Missing service name!", fn ->
+      assert_raise Octopus.Error, "Missing service name!", fn ->
         @definition
         |> Map.delete("name")
         |> Definition.new()
@@ -79,7 +66,7 @@ defmodule Octopus.DefinitionTest do
     end
 
     test "client module doesn't exist" do
-      assert_raise Octopus.DefinitionError, "Module 'Client2' doesn't exist!", fn ->
+      assert_raise Octopus.Error, "Module 'Client2' doesn't exist!", fn ->
         @definition
         |> put_in(["client", "module"], "Client2")
         |> Definition.new()

@@ -1,19 +1,15 @@
-defmodule Octopus.DefinitionError do
-  defexception [:message]
-end
-
 defmodule Octopus.Definition do
   @moduledoc """
   Compiles the interface definition into a module.
   """
-  alias Octopus.{Configs, DefinitionError, Utils}
+  alias Octopus.{Configs, Error, Utils}
   defstruct [:name, :client, :interface]
 
   @spec new(map()) :: %Octopus.Definition{} | no_return()
   def new(definition) do
-    name = definition["name"] || raise DefinitionError, "Missing service name!"
-    client = definition["client"] || raise DefinitionError, "Missing client definition!"
-    interface = definition["interface"] || raise DefinitionError, "Missing interface definition!"
+    name = definition["name"] || raise Error, "Missing service name!"
+    client = definition["client"] || raise Error, "Missing client definition!"
+    interface = definition["interface"] || raise Error, "Missing interface definition!"
 
     %__MODULE__{
       name: name,
@@ -36,7 +32,8 @@ defmodule Octopus.Definition do
       namespace: namespace(),
       service_module: service_module,
       client_module: client_module,
-      client_module_init_config: definition.client["init"],
+      client_module_init_config: definition.client["init"] || %{},
+      client_module_stop_config: definition.client["stop"] || %{},
       interface: definition.interface
     )
     |> eval_code()
@@ -58,12 +55,12 @@ defmodule Octopus.Definition do
     defmodule <%= namespace %>.<%= service_module %> do
       def ok?, do: true
 
-      @start_configs "<%= Base.encode64(:erlang.term_to_binary(client_module_init_config)) %>"
+      @init_configs "<%= Base.encode64(:erlang.term_to_binary(client_module_init_config)) %>"
                      |> Base.decode64!()
                      |> :erlang.binary_to_term()
 
       def init(args \\\\ %{}) do
-        case <%= client_module %>.init(args, @start_configs) do
+        case <%= client_module %>.init(args, @init_configs, <%= namespace %>.<%= service_module %>) do
           {:ok, state} ->
             Octopus.Definition.define_state(__MODULE__, state)
             {:ok, state}
@@ -77,7 +74,30 @@ defmodule Octopus.Definition do
         apply(__MODULE__.State, :state, [])
       rescue
         UndefinedFunctionError ->
-          :not_started
+          raise Octopus.Error, "Service not initiated!"
+      end
+
+      def ready? do
+        Octopus.Utils.module_exist?(__MODULE__.State)
+      end
+
+      @stop_configs "<%= Base.encode64(:erlang.term_to_binary(client_module_init_config)) %>"
+                     |> Base.decode64!()
+                     |> :erlang.binary_to_term()
+
+      def stop(args \\\\ %{}) do
+        <%= client_module %>.stop(args, @stop_configs, state())
+        :code.purge __MODULE__.State
+        :code.delete __MODULE__.State
+        :ok
+      end
+
+      def delete() do
+        :code.purge __MODULE__.State
+        :code.purge __MODULE__
+        :code.delete __MODULE__.State
+        :code.delete __MODULE__
+        :ok
       end
 
       <%= for {name, configs} <- interface do %>
@@ -118,7 +138,7 @@ defmodule Octopus.Definition do
 
   defp validate_module_or_raise(module) do
     unless Utils.module_exist?(String.to_atom("Elixir.#{module}")) do
-      raise DefinitionError, "Module '#{module}' doesn't exist!"
+      raise Error, "Module '#{module}' doesn't exist!"
     end
 
     module
