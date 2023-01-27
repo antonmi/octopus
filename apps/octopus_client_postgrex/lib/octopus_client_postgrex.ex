@@ -30,7 +30,7 @@ defmodule OctopusClientPostgrex do
       end
 
     state = %{
-      pid: inspect(pid),
+      pid: pid,
       name: name,
       host: host,
       port: port,

@@ -10,7 +10,7 @@ defmodule Octopus.GithubServiceTest do
 
   setup_all do
     {:ok, "github"} = Octopus.define(read_definition())
-    {:ok, _state} = Octopus.init("github")
+    {:ok, _state} = Octopus.start("github")
 
     :ok
   end

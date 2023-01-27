@@ -4,27 +4,35 @@ defmodule OctopusClientHttpFinchTest do
   @base_url "http://localhost"
   @headers %{"Content-Type" => "application/json"}
 
-  describe "init/1" do
+  describe "start/1" do
     setup do
       args = %{"base_url" => @base_url, "headers" => @headers}
       configs = %{"pool_size" => 10}
-      {:ok, state} = OctopusClientHttpFinch.init(args, configs)
+      {:ok, state} = OctopusClientHttpFinch.start(args, configs, MyService)
+      on_exit(fn -> OctopusClientHttpFinch.stop(%{}, %{}, state) end)
       %{state: state}
     end
 
     test "checks the state", %{state: state} do
-      assert Process.alive?(Process.whereis(state.name))
+      assert state.name == MyService
+      assert Process.alive?(Process.whereis(MyService))
       assert state.base_url == @base_url
       assert state.headers == %{"Content-Type" => "application/json"}
       assert state.pool_size == 10
       assert state.pid != nil
     end
 
-    test "init another client", %{state: state} do
+    test "try to start already started client" do
+      args = %{"base_url" => @base_url, "headers" => @headers}
+      assert {:error, :already_started} = OctopusClientHttpFinch.start(args, %{}, MyService)
+    end
+
+    test "start another client with specific process_name" do
       args = %{"base_url" => @base_url, "headers" => @headers}
       configs = %{"process_name" => "another_client"}
-      {:ok, new_state} = OctopusClientHttpFinch.init(args, configs)
-      assert Process.alive?(Process.whereis(state.name))
+      {:ok, new_state} = OctopusClientHttpFinch.start(args, configs, MyService)
+      assert new_state.name == :another_client
+      assert Process.alive?(Process.whereis(:another_client))
       assert Process.alive?(Process.whereis(new_state.name))
     end
   end
@@ -46,7 +54,8 @@ defmodule OctopusClientHttpFinchTest do
         "pool_size" => 10
       }
 
-      {:ok, state} = OctopusClientHttpFinch.init(args)
+      {:ok, state} = OctopusClientHttpFinch.start(args, %{}, MyService)
+      on_exit(fn -> OctopusClientHttpFinch.stop(%{}, %{}, state) end)
       %{bypass: bypass, state: state}
     end
 
@@ -81,7 +90,8 @@ defmodule OctopusClientHttpFinchTest do
         "pool_size" => 10
       }
 
-      {:ok, state} = OctopusClientHttpFinch.init(args)
+      {:ok, state} = OctopusClientHttpFinch.start(args, %{}, MyService)
+      on_exit(fn -> OctopusClientHttpFinch.stop(%{}, %{}, state) end)
       %{bypass: bypass, state: state}
     end
 

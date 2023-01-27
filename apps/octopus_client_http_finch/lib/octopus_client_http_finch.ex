@@ -3,35 +3,51 @@ defmodule OctopusClientHttpFinch do
 
   @default_pool_size 10
 
-  @spec init(map(), map()) :: {:ok, map()}
-  def init(args, configs \\ %{}) do
+  @spec start(map(), map(), atom()) :: {:ok, map()} | {:error, :already_started}
+  def start(args, configs, service_module) do
     base_url = args["base_url"] || configs["base_url"]
     headers = Map.merge(configs["headers"] || %{}, args["headers"] || %{})
     pool_size = args["pool_size"] || configs["pool_size"] || @default_pool_size
 
+    process_name = args["process_name"] || configs["process_name"]
+
     name =
-      String.to_atom(args["process_name"] || configs["process_name"] || generate_process_name())
+      case process_name do
+        nil -> service_module
+        specific_process_name -> String.to_atom(specific_process_name)
+      end
 
     spec = {Finch, name: name, pools: %{base_url => [size: pool_size]}}
 
-    pid =
-      case DynamicSupervisor.start_child(__MODULE__.DynamicSupervisor, spec) do
-        {:ok, pid} -> pid
-        {:error, {:already_started, pid}} -> pid
-      end
+    case DynamicSupervisor.start_child(__MODULE__.DynamicSupervisor, spec) do
+      {:ok, pid} ->
+        state = %{
+          pid: pid,
+          name: name,
+          base_url: base_url,
+          headers: headers,
+          pool_size: pool_size
+        }
 
-    state = %{
-      pid: inspect(pid),
-      name: name,
-      base_url: base_url,
-      headers: headers,
-      pool_size: pool_size
-    }
+        {:ok, state}
 
-    {:ok, state}
+      {:error, {:already_started, _pid}} ->
+        {:error, :already_started}
+    end
   end
 
-  @spec call(map(), map(), term()) :: map()
+  @spec stop(map(), map(), any()) :: {:ok, any()} | {:error, :not_found}
+  def stop(_args, _configs, state) do
+    case DynamicSupervisor.terminate_child(__MODULE__.DynamicSupervisor, state.pid) do
+      :ok ->
+        {:ok, state}
+
+      {:error, :not_found} ->
+        {:error, :not_found}
+    end
+  end
+
+  @spec call(map(), map(), any()) :: {:ok, map()} | {:error, any()}
   def call(args, configs, state) do
     method = method_to_atom(args["method"])
     headers = args["headers"] || %{}
@@ -88,11 +104,6 @@ defmodule OctopusClientHttpFinch do
       {:error, error} ->
         {:error, error}
     end
-  end
-
-  defp generate_process_name() do
-    timestamp = DateTime.utc_now() |> DateTime.to_unix()
-    "#{__MODULE__}#{timestamp}"
   end
 
   defp build_url(url, path, params) do

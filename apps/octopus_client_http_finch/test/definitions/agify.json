@@ -2,7 +2,7 @@
   "name": "agify",
   "client": {
     "module": "OctopusClientHttpFinch",
-    "init": {
+    "start": {
       "base_url": "https://api.agify.io/",
       "pool_size": 10,
       "headers": {}
