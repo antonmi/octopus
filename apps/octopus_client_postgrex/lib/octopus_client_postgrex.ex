@@ -3,16 +3,21 @@ defmodule OctopusClientPostgrex do
     defexception [:message]
   end
 
-  @spec init(map(), map()) :: {:ok, map()} | no_return()
-  def init(args, configs) do
+  @spec start(map(), map(), atom()) :: {:ok, map()} | {:error, :already_started}
+  def start(args, configs, service_module) do
     host = args["host"] || configs["host"]
     port = args["port"] || configs["port"]
     database = args["database"] || configs["database"]
     username = args["username"] || configs["username"]
     password = args["password"] || configs["password"]
 
+    process_name = args["process_name"] || configs["process_name"]
+
     name =
-      String.to_atom(args["process_name"] || configs["process_name"] || generate_process_name())
+      case process_name do
+        nil -> service_module
+        specific_process_name -> String.to_atom(specific_process_name)
+      end
 
     spec =
       {Postgrex,
@@ -23,23 +28,23 @@ defmodule OctopusClientPostgrex do
        password: password,
        name: name}
 
-    pid =
-      case DynamicSupervisor.start_child(__MODULE__.DynamicSupervisor, spec) do
-        {:ok, pid} -> pid
-        {:error, {:already_started, pid}} -> pid
-      end
+    case DynamicSupervisor.start_child(__MODULE__.DynamicSupervisor, spec) do
+      {:ok, pid} ->
+        state = %{
+          pid: pid,
+          name: name,
+          host: host,
+          port: port,
+          database: database,
+          username: username,
+          password: password
+        }
 
-    state = %{
-      pid: pid,
-      name: name,
-      host: host,
-      port: port,
-      database: database,
-      username: username,
-      password: password
-    }
+        {:ok, state}
 
-    {:ok, state}
+      {:error, {:already_started, _pid}} ->
+        {:error, :already_started}
+    end
   end
 
   @spec call(map(), map(), map()) :: {:ok, map()} | {:error, Error.t()}
@@ -57,9 +62,9 @@ defmodule OctopusClientPostgrex do
     end
   end
 
-  defp generate_process_name() do
-    timestamp = DateTime.utc_now() |> DateTime.to_unix()
-    "#{__MODULE__}#{timestamp}"
+  @spec stop(map(), map(), any()) :: :ok | {:error, :not_found}
+  def stop(_args, _configs, state) do
+    DynamicSupervisor.terminate_child(__MODULE__.DynamicSupervisor, state.pid)
   end
 
   defp opts_to_keyword_list(opts) do

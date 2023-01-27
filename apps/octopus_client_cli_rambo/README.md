@@ -9,7 +9,7 @@
   "name": "files",
   "client": {
     "module": "OctopusClientCliRambo",
-    "init": {}
+    "start": {}
   },
   "interface": {
     "ls": {

@@ -36,15 +36,9 @@ defmodule OctopusClientHttpFinch do
     end
   end
 
-  @spec stop(map(), map(), any()) :: {:ok, any()} | {:error, :not_found}
+  @spec stop(map(), map(), any()) :: :ok | {:error, :not_found}
   def stop(_args, _configs, state) do
-    case DynamicSupervisor.terminate_child(__MODULE__.DynamicSupervisor, state.pid) do
-      :ok ->
-        {:ok, state}
-
-      {:error, :not_found} ->
-        {:error, :not_found}
-    end
+    DynamicSupervisor.terminate_child(__MODULE__.DynamicSupervisor, state.pid)
   end
 
   @spec call(map(), map(), any()) :: {:ok, map()} | {:error, any()}

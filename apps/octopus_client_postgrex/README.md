@@ -9,7 +9,7 @@
   "name": "users",
   "client": {
     "module": "OctopusClientPostgrex",
-    "init": {
+    "start": {
       "host": "localhost",
       "port": "5432",
       "username": "postgres",
