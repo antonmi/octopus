@@ -87,7 +87,7 @@ defmodule Octopus do
       {:error, error}
   end
 
-  @spec stop(String.t(), map()) :: {:ok, map()} | {:error, any()}
+  @spec restart(String.t(), map()) :: {:ok, map()} | {:error, any()}
   def restart(service_name, args \\ %{}) do
     case status(service_name) do
       :undefined ->

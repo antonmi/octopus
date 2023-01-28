@@ -1,8 +1,6 @@
 defmodule OctopusAgent.Router do
   use Plug.Router
 
-  alias Api.Definition
-
   plug(Plug.Logger, log: :debug)
   plug(:match)
   plug(:dispatch)
@@ -17,41 +15,82 @@ defmodule OctopusAgent.Router do
 
   post "/define" do
     {:ok, body, conn} = read_body(conn)
-    map = Jason.decode!(body)
 
-    case Octopus.define(map) do
-      {:ok, name} ->
-        send_resp(conn, 200, Jason.encode!(%{ok: name}))
+    case OctopusAgent.define(body) do
+      {:ok, response} ->
+        send_resp(conn, 200, response)
 
-      {:error, reason} ->
-        send_resp(conn, 400, Jason.encode!(%{error: reason}))
+      {:error, response} ->
+        send_resp(conn, 400, response)
     end
   end
 
-  post "/init/:name" do
+  post "/start/:name" do
     {:ok, body, conn} = read_body(conn)
-    map = Jason.decode!(body)
 
-    case Octopus.init(conn.params["name"], map) do
-      {:ok, state} ->
-        send_resp(conn, 200, Jason.encode!(state))
+    case OctopusAgent.start(conn.params["name"], body) do
+      {:ok, response} ->
+        send_resp(conn, 200, response)
 
-      {:error, reason} ->
-        send_resp(conn, 400, Jason.encode!(%{error: reason}))
+      {:error, response} ->
+        send_resp(conn, 400, response)
     end
   end
 
   post "call/:name/:function" do
     {:ok, body, conn} = read_body(conn)
-    map = Jason.decode!(body)
 
-    case Octopus.call(conn.params["name"], conn.params["function"], map) do
-      {:ok, result} ->
-        send_resp(conn, 200, Jason.encode!(result))
+    case OctopusAgent.call(conn.params["name"], conn.params["function"], body) do
+      {:ok, response} ->
+        send_resp(conn, 200, response)
 
-      {:error, reason} ->
-        send_resp(conn, 400, Jason.encode!(%{error: reason}))
+      {:error, response} ->
+        send_resp(conn, 400, response)
     end
+  end
+
+  post "stop/:name" do
+    {:ok, body, conn} = read_body(conn)
+
+    case OctopusAgent.stop(conn.params["name"], body) do
+      {:ok, response} ->
+        send_resp(conn, 200, response)
+
+      {:error, response} ->
+        send_resp(conn, 400, response)
+    end
+  end
+
+  post "restart/:name" do
+    {:ok, body, conn} = read_body(conn)
+
+    case OctopusAgent.restart(conn.params["name"], body) do
+      {:ok, response} ->
+        send_resp(conn, 200, response)
+
+      {:error, response} ->
+        send_resp(conn, 400, response)
+    end
+  end
+
+  post "delete/:name" do
+    case OctopusAgent.delete(conn.params["name"]) do
+      {:ok, response} ->
+        send_resp(conn, 200, response)
+
+      {:error, response} ->
+        send_resp(conn, 400, response)
+    end
+  end
+
+  post "/status/:name" do
+    {:ok, response} = OctopusAgent.status(conn.params["name"])
+    send_resp(conn, 200, response)
+  end
+
+  get "/status/:name" do
+    {:ok, response} = OctopusAgent.status(conn.params["name"])
+    send_resp(conn, 200, response)
   end
 
   match _ do
