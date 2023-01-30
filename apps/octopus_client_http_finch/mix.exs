@@ -4,7 +4,7 @@ defmodule OctopusClientHttpFinch.MixProject do
   def project do
     [
       app: :octopus_client_http_finch,
-      version: "0.2.0",
+      version: "0.2.1",
       elixir: "~> 1.12",
       description: description(),
       package: package(),

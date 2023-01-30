@@ -3,24 +3,24 @@
 ## Specification -> Elixir Code -> API
 
 ### The problem
-As an application engineer I want to have a simple way of interfacing
-with programs/services that provide the functionality I need.
-Conventional approach to that is creating client libraries.
+As an application engineer, I'm need a simple way of interfacing
+with programs/services that provide the required functionality.
+The conventional approach to the problem is creating client libraries.
 Such a library usually does three simple things:
 
-1. Translates data-structures provided by the programming language (e.g. Elixir) to data required by another program (e.g. GET request to a URL with params)
-2. Calls the program (e.g. makes HTTP request)
-3. Translates the result (e.g. JSON response) to the language's data-structures
+1. Translates data structures provided by the programming language (e.g. Elixir) to data required by another program (e.g. GET request to a URL with params).
+2. Calls the program (e.g. makes HTTP request).
+3. Translates the result (e.g. JSON response) to the language's data structures.
 
 However, each such translation must be explicitly coded. And this leads to a decent amount of boilerplate code.
 
 ### The idea
-These kinds of translations can be expressed in declarative way via specifications expressed as a data-structure. 
+These kinds of translations can be expressed in declarative way via specifications expressed as a data structure. 
 
 ### The solution
-The specification can be provided using a JSON data-structure that describes the behavior of a service.
+The specification can be provided using a JSON data structure that describes the behavior of a service.
 The client library code is generated from the specification.
-The JSON chosen as the specification language because it is easy to translate to Elixir data-structures:
+The JSON chosen as the specification language because it is easy to translate to Elixir data structures:
 JSON objects are translated to maps, JSON arrays are translated to lists, etc.
 
 Consider a simple example. Let's say we are going to use the [Agify](https://agify.io/) service. It predicts age of a person by name.
@@ -67,13 +67,13 @@ See the [OctopusClientHttpFinch](apps/octopus_client_http_finch/lib/octopus_clie
 
 Second, it describes the interface of the service. In this case it has only one function - `age_for_name`.
 There are 5 **optional** steps in the interface definition:
-1. `input` - describes the input data-structure. If specified, the input data is validated against it. Octopus uses [JSON Schema](https://json-schema.org/) for data definition and validation.
+1. `input` - describes the input data structure. If specified, the input data is validated against it. Octopus uses [JSON Schema](https://json-schema.org/) for data definition and validation.
 2. `prepare` - describes how the transformations needed to be done to the input data to make it ready for the call: path, method, params, headers, etc.
 3. `call` - configures the actual call to the service. Here it just says that the response body should be parsed as JSON.
 4. `transform` - describes how the result of the call should be transformed. In this case it just takes the `name` field from the response body.
-5. `output` - describes the output data-structure. The output data is validated against it.
+5. `output` - describes the output data structure. The output data is validated against it.
 
-The definition can also be provided as an Elixir data-structure:
+The definition can also be provided as an Elixir data structure:
 ```elixir
 definition = %{
   "client" => %{
@@ -96,7 +96,7 @@ definition = %{
   "name" => "agify"
 }
 ```
-Please note that strings are used as keys in the input data-structure. The idea is to close to the JSON as possible, and JSON doesn't have atom type.
+Please note that strings are used as keys in the input data structure. The idea is to close to the JSON as possible, and JSON doesn't have atom type.
 
 ### Transformations
 There are two steps in the interface definition that transforms the data: `prepare` and `transform`.
@@ -128,7 +128,7 @@ Then, the service can be called:
 iex(1)> Octopus.call("agify", "age_for_name", %{"name" => "Anton"})
 %{"age" => 50}
 ```
-Again, note, that strings are used as keys in the input data-structure.
+Again, note, that strings are used as keys in the input data structure.
 
 See [`octopus_test.exs`](apps/octopus/test/octopus_test.exs) for more other functions in Octopus.
 
