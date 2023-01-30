@@ -130,7 +130,7 @@ iex(1)> Octopus.call("agify", "age_for_name", %{"name" => "Anton"})
 ```
 Again, note, that strings are used as keys in the input data structure.
 
-See [`octopus_test.exs`](apps/octopus/test/octopus_test.exs) for more other functions in Octopus.
+See [`octopus_test.exs`](apps/octopus/test/octopus_test.exs) for other functions in Octopus.
 
 ### OctopusAgent
 Since we translate the interface to JSON it becomes easy to interact with them via HTTP JSON API.
