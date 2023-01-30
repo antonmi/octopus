@@ -1,5 +1,6 @@
 defmodule OctopusClientHttpFinch do
   @moduledoc false
+  @behaviour Octopus.Client
 
   @default_pool_size 10
 

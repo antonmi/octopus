@@ -1,7 +1,6 @@
 defmodule OctopusClientPostgrex do
-  defmodule Error do
-    defexception [:message]
-  end
+  @moduledoc false
+  @behaviour Octopus.Client
 
   @spec start(map(), map(), atom()) :: {:ok, map()} | {:error, :already_started}
   def start(args, configs, service_module) do
@@ -47,7 +46,7 @@ defmodule OctopusClientPostgrex do
     end
   end
 
-  @spec call(map(), map(), map()) :: {:ok, map()} | {:error, Error.t()}
+  @spec call(map(), map(), map()) :: {:ok, map()} | {:error, any()}
   def call(args, configs, state) do
     statement = args["statement"] || configs["statement"]
     params = args["params"] || configs["params"] || []
@@ -58,7 +57,7 @@ defmodule OctopusClientPostgrex do
         {:ok, %{"columns" => columns, "num_rows" => num_rows, "rows" => rows}}
 
       {:error, error} ->
-        {:error, %Error{message: inspect(error)}}
+        {:error, error}
     end
   end
 

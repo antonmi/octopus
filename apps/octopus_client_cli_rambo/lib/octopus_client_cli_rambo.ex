@@ -1,4 +1,7 @@
 defmodule OctopusClientCliRambo do
+  @moduledoc false
+  @behaviour Octopus.Client
+
   @spec start(map(), map(), atom()) :: {:ok, map()}
   def start(_args, _configs \\ %{}, _service_name) do
     {:ok, %{}}

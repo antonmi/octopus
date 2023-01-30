@@ -60,7 +60,7 @@ defmodule OctopusTest do
     end
   end
 
-  describe "start" do
+  describe "start/2" do
     test "when status is :undefined" do
       assert {:error, :undefined} = Octopus.start("my-service")
     end
@@ -83,7 +83,7 @@ defmodule OctopusTest do
     end
   end
 
-  describe "call" do
+  describe "call/3" do
     test "when status is :undefined" do
       assert {:error, :undefined} = Octopus.call("my-service", "my_function", %{"in" => "in"})
     end
@@ -110,7 +110,7 @@ defmodule OctopusTest do
     end
   end
 
-  describe "stop" do
+  describe "stop/2" do
     test "when status is :undefined" do
       assert {:error, :undefined} = Octopus.stop("my-service")
     end
@@ -129,7 +129,7 @@ defmodule OctopusTest do
     end
   end
 
-  describe "restart" do
+  describe "restart/2" do
     test "when status is :undefined" do
       assert {:error, :undefined} = Octopus.restart("my-service")
     end
@@ -149,7 +149,7 @@ defmodule OctopusTest do
     end
   end
 
-  describe "delete" do
+  describe "delete/2" do
     test "when status is :undefined" do
       assert {:error, :undefined} = Octopus.delete("my-service")
     end

@@ -25,7 +25,7 @@ defmodule OctopusClientCliRambo.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:octopus, in_umbrella: true},
+      {:octopus, in_umbrella: true, only: [:dev, :test]},
       {:rambo, "~> 0.3"}
     ]
   end
