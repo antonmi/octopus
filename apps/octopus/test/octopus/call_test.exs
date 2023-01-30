@@ -36,7 +36,8 @@ defmodule Octopus.CallTest do
   describe "call/3 success case" do
     test "success" do
       args = %{"foo" => "the_foo"}
-      {:ok, result} = Call.call(Client, args, @interface_configs, %{})
+      struct = %Call{client_module: Client, args: args, interface_configs: @interface_configs}
+      {:ok, result} = Call.call(struct)
       assert result == %{"x" => "the_foobazbarxxx", "y" => 2}
     end
   end
@@ -44,37 +45,51 @@ defmodule Octopus.CallTest do
   describe "error cases" do
     test "when input has invalid type" do
       args = %{"foo" => 1}
-      {:error, error} = Call.call(Client, args, @interface_configs, %{})
+      struct = %Call{client_module: Client, args: args, interface_configs: @interface_configs}
+      {:error, error} = Call.call(struct)
       assert error == [{"Type mismatch. Expected String but got Integer.", "#/foo"}]
     end
 
     test "when input doesn't have required field" do
       interface_configs = put_in(@interface_configs["input"]["required"], ["foo"])
-
-      {:error, error} = Call.call(Client, %{}, interface_configs, %{})
+      struct = %Call{client_module: Client, args: %{}, interface_configs: interface_configs}
+      {:error, error} = Call.call(struct)
       assert error == [{"Required property foo was not present.", "#"}]
     end
 
     test "when input has invalid configs" do
       interface_configs = put_in(@interface_configs["input"]["required"], 123)
+      struct = %Call{client_module: Client, args: %{}, interface_configs: interface_configs}
 
       assert_raise(
         ExJsonSchema.Schema.InvalidSchemaError,
-        fn -> Call.call(Client, %{}, interface_configs, %{}) end
+        fn -> Call.call(struct) end
       )
     end
 
     test "error in output" do
       interface_configs = put_in(@interface_configs["transform"]["y"], "to_string(args['baz'])")
-      {:error, error} = Call.call(Client, %{"foo" => "the_foo"}, interface_configs, %{})
+
+      struct = %Call{
+        client_module: Client,
+        args: %{"foo" => "the_foo"},
+        interface_configs: interface_configs
+      }
+
+      {:error, error} = Call.call(struct)
       assert error == [{"Type mismatch. Expected Integer but got String.", "#/y"}]
     end
 
     test "error in adapter call" do
       interface_configs = put_in(@interface_configs["call"]["ok"], false)
 
-      assert {:error, :some_error} =
-               Call.call(Client, %{"foo" => "the_foo"}, interface_configs, %{})
+      struct = %Call{
+        client_module: Client,
+        args: %{"foo" => "the_foo"},
+        interface_configs: interface_configs
+      }
+
+      assert {:error, :some_error} = Call.call(struct)
     end
   end
 end

@@ -3,18 +3,20 @@ defmodule Octopus.Definition do
   Compiles the interface definition into a module.
   """
   alias Octopus.{Configs, Error, Utils}
-  defstruct [:name, :client, :interface]
+  defstruct [:name, :client, :interface, :helpers]
 
   @spec new(map()) :: %Octopus.Definition{} | no_return()
   def new(definition) do
     name = definition["name"] || raise Error, "Missing service name!"
     client = definition["client"] || raise Error, "Missing client definition!"
     interface = definition["interface"] || raise Error, "Missing interface definition!"
+    helpers = definition["helpers"] || []
 
     %__MODULE__{
       name: name,
       client: client,
-      interface: interface
+      interface: interface,
+      helpers: helpers
     }
   end
 
@@ -34,7 +36,8 @@ defmodule Octopus.Definition do
       client_module: client_module,
       client_module_start_config: definition.client["start"] || %{},
       client_module_stop_config: definition.client["stop"] || %{},
-      interface: definition.interface
+      interface: definition.interface,
+      helpers: helper_modules(definition.helpers)
     )
     |> eval_code()
     |> case do
@@ -53,8 +56,6 @@ defmodule Octopus.Definition do
   defp template() do
     """
     defmodule <%= namespace %>.<%= service_module %> do
-      def ok?, do: true
-
       @start_configs "<%= Base.encode64(:erlang.term_to_binary(client_module_start_config)) %>"
                      |> Base.decode64!()
                      |> :erlang.binary_to_term()
@@ -100,13 +101,24 @@ defmodule Octopus.Definition do
         :ok
       end
 
+      @helpers "<%= Base.encode64(:erlang.term_to_binary(helpers)) %>"
+               |> Base.decode64!()
+               |> :erlang.binary_to_term()
+      
       <%= for {name, configs} <- interface do %>
         @interface_configs_<%= name %> "<%= Base.encode64(:erlang.term_to_binary(configs)) %>"
                                        |> Base.decode64!()
                                        |> :erlang.binary_to_term()
 
         def <%= name %>(args) do
-          Octopus.Call.call(<%= client_module %>, args, @interface_configs_<%= name %>, state())
+          struct = %Octopus.Call{
+            client_module: <%= client_module %>,
+            args: args,
+            interface_configs: @interface_configs_<%= name %>,
+            helpers: @helpers,
+            state: state()
+          }
+          Octopus.Call.call(struct)
         end
       <% end %>
     end
@@ -128,6 +140,13 @@ defmodule Octopus.Definition do
 
   defp namespace do
     Configs.services_namespace()
+  end
+
+  defp helper_modules(helpers) do
+    helpers
+    |> Enum.map(&Utils.modulize/1)
+    |> Enum.map(&validate_module_or_raise/1)
+    |> Enum.map(&String.to_atom("Elixir.#{&1}"))
   end
 
   defp eval_code(code) do

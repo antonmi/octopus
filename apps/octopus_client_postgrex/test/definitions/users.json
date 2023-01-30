@@ -44,7 +44,7 @@
       },
       "call": {
         "opts": {
-          "timeout": 100
+          "timeout": 1000
         }
       },
       "transform": {

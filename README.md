@@ -139,16 +139,21 @@ See the OctopusAgent [README.md](apps/octopus_agent/README.md) for more details.
 
 ### Clients
 Clients are the low-level modules that do the actual communication with the service.
-One can find the examples in the umbrella apps here (octopus_client_*).
+One can find the examples in the umbrella apps here:
+- [octopus_client_http_finch](apps/octopus_client_http_finch)
+- [octopus_client_cli_rambo](apps/octopus_client_cli_rambo)
+- [octopus_client_postgrex](apps/octopus_client_postgrex)
+
 You can use them as a dependency or just copy-paste the code to your project.
-The client must implement three functions:
+The client must implement three functions (see the [Octopus.Client](apps/octopus/lib/octopus/client.ex) behaviour):
+```elixir
 First:
 ```elixir
 @spec start(map(), map(), atom()) :: {:ok, map()} | {:error, any()}
 def start(args, configs, service_module) do
-  # args comes from Octopus.start("my_service", args)
-  # configs comes from the "start" section of the specification
-  # service_module is the module of the defined service (like Octopus.Services.MyService) 
+  # `args` comes from Octopus.start("my_service", args)
+  # `configs` comes from the "start" section of the specification
+  # `service_module` is the module of the defined service (like Octopus.Services.MyService) 
 end
 ```
 The returned map represents the state of the client. 
@@ -158,9 +163,9 @@ Second:
 ```elixir
 @spec stop(map(), map(), any()) :: :ok | {:error, :not_found}
 def start(args, configs, state) do
-  # args comes from Octopus.stop("my_service", args)
-  # configs comes from the "stop" section of the specification
-  # state is the map returned from the start function 
+  # `args` comes from Octopus.stop("my_service", args)
+  # `configs` comes from the "stop" section of the specification
+  # `state` is the map returned from the start function 
 end
 ```
 
@@ -168,11 +173,37 @@ Third:
 ```elixir
 @spec call(map(), map(), any()) :: {:ok, map()} | {:error, any()}
 def call(args, configs, state) do
-  # args comes from Octopus.call("my_service", "my_function", args)
-  # configs comes from the "call" section of the specification
-  # state is the map returned from the start function
+  # `args` comes from Octopus.call("my_service", "my_function", args)
+  # `configs` comes from the "call" section of the specification
+  # `state` is the map returned from the start function
 end
 ```
 
 ### Custom Helpers
-TODO
+It is possible to add custom helpers for the transformation steps.
+One can add list of helper modules to the `helpers` key in the specification:
+```elixir
+```json
+{
+  "name": "my_service",
+  "helpers": ["MyHelpers", "AnotherHelpers"]
+  "client": ...,
+  "interface": ...,
+}
+```
+The modules must exist (be compiled) before the service is defined.
+Functions from the modules will be available in the transformation steps.
+For example, if you have a module:
+```elixir
+defmodule MyCustomHelpers do
+  def inc_by_one(number), do: number + 1
+end
+```
+You can use it in the transformation step:
+```elixir
+%{
+"prepare" => %{"y" => "inc_by_one(args['x'])"},
+"transform" => %{"z" => "inc_by_one(args)"},
+}
+```
+

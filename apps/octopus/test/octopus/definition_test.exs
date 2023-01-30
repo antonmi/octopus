@@ -33,10 +33,6 @@ defmodule Octopus.DefinitionTest do
     :ok
   end
 
-  test "module is compiled" do
-    assert apply(@service_module, :ok?, [])
-  end
-
   describe "start/1" do
     setup do
       {:ok, state} = apply(@service_module, :start, [%{"a" => "b"}])

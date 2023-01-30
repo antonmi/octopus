@@ -1,20 +1,32 @@
 defmodule Octopus.Call do
   @moduledoc """
-  Implements the call/4 function for the generated modules.
+  Implements the call/1 function for the generated modules.
   See Octopus.Definition.
   """
+  defstruct client_module: nil,
+            args: %{},
+            interface_configs: %{},
+            helpers: [],
+            state: nil
+
   alias Octopus.{Transform, Validate}
 
-  @spec call(atom(), map(), map(), any()) :: {:ok, map()} | {:error, any()}
-  def call(client_module, args, interface_configs, state)
+  @spec call(%__MODULE__{}) :: {:ok, map()} | {:error, any()}
+  def call(%__MODULE__{
+        client_module: client_module,
+        args: args,
+        interface_configs: interface_configs,
+        helpers: helpers,
+        state: state
+      })
       when is_atom(client_module) and is_map(args) and is_map(interface_configs) do
     with {:ok, args} <- Validate.validate(args, Map.get(interface_configs, "input", %{})),
          {:ok, args} <-
-           Transform.transform(args, Map.get(interface_configs, "prepare", false)),
+           Transform.transform(args, Map.get(interface_configs, "prepare", false), helpers),
          {:ok, args} <-
            apply(client_module, :call, [args, Map.get(interface_configs, "call", %{}), state]),
          {:ok, args} <-
-           Transform.transform(args, Map.get(interface_configs, "transform", false)),
+           Transform.transform(args, Map.get(interface_configs, "transform", false), helpers),
          {:ok, args} <- Validate.validate(args, Map.get(interface_configs, "output", %{})) do
       {:ok, args}
     else
