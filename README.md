@@ -3,7 +3,7 @@
 ## Specification -> Elixir Code -> API
 
 ### The problem
-As an application engineer, I'm need a simple way of interfacing
+As an application engineer, I need a simple way of interfacing
 with programs/services that provide the required functionality.
 The conventional approach to the problem is creating client libraries.
 Such a library usually does three simple things:
