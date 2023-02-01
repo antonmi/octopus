@@ -186,20 +186,20 @@ One can add list of helper modules to the `helpers` key in the specification:
 ```json
 {
   "name": "my_service",
-  "helpers": ["MyHelpers", "AnotherHelpers"]
+  "helpers": ["MyCustomHelpers", "AnotherHelpers"],
   "client": ...,
   "interface": ...,
 }
 ```
 The modules must exist (be compiled) before the service is defined.
 Functions from the modules will be available in the transformation steps.
-For example, if you have a module:
+If, for example, you have:
 ```elixir
 defmodule MyCustomHelpers do
   def inc_by_one(number), do: number + 1
 end
 ```
-You can use it in the transformation step:
+You can use the `inc_by_one` function in the transformation step:
 ```elixir
 %{
 "prepare" => %{"y" => "inc_by_one(args['x'])"},
