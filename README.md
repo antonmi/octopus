@@ -8,9 +8,9 @@ with programs/services that provide the required functionality.
 The conventional approach to the problem is creating client libraries.
 Such a library usually does three simple things:
 
-1. Translates data structures provided by the programming language (e.g. Elixir) to data required by another program (e.g. GET request to a URL with params).
-2. Calls the program (e.g. makes HTTP request).
-3. Translates the result (e.g. JSON response) to the language's data structures.
+1. Translate data structures provided by the programming language (e.g. Elixir) to data required by another program (e.g. GET request to a URL with params).
+2. Call the program (e.g. make HTTP request).
+3. Translate the result (e.g. JSON response) to the language's data structures.
 
 However, each such translation must be explicitly coded. And this leads to a decent amount of boilerplate code.
 
@@ -18,9 +18,9 @@ However, each such translation must be explicitly coded. And this leads to a dec
 These kinds of translations can be expressed in declarative way via specifications expressed as a data structure. 
 
 ### The solution
-The specification can be provided using a JSON data structure that describes the behavior of a service.
+The specification can be provided using a JSON data structure that describes the interface to a service.
 The client library code is generated from the specification.
-The JSON chosen as the specification language because it is easy to translate to Elixir data structures:
+The JSON is chosen as the specification language because it is easy to translate to Elixir data structures:
 JSON objects are translated to maps, JSON arrays are translated to lists, etc.
 
 Consider a simple example. Let's say we are going to use the [Agify](https://agify.io/) service. It predicts age of a person by name.
@@ -52,7 +52,7 @@ The JSON specification for the service would be:
         "parse_json_body": true
       },
       "transform": {
-        "name": "get_in(args, ['body', 'name'])"
+        "age": "get_in(args, ['body', 'age'])"
       },
       "output": {
         "age": {"type": "number"}
@@ -89,7 +89,7 @@ definition = %{
         "path" => "/"
       },
       "call" => %{"parse_json_body" => true},
-      "transform" => %{"name" => "get_in(args, ['body', 'name'])"},
+      "transform" => %{"age" => "get_in(args, ['body', 'age'])"},
       "output" => %{"age" => %{"type" => "number"}}
     }
   },
