@@ -35,7 +35,7 @@ defmodule Octopus.Eval do
       {{:., _, [Access, _]}, _, _} = code ->
         code
 
-      {{:., _, [{:__aliases__, [line: 1], [:Access]}, _]}, _, _} = code ->
+      {{:., _, [{:__aliases__, _, [:Access]}, _]}, _, _} = code ->
         code
 
       {{:., _, _}, _, _} = bad ->

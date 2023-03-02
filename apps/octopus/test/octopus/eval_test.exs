@@ -15,6 +15,15 @@ defmodule Octopus.EvalTest do
     end) =~ "[error]"
   end
 
+  test "it does not :os.cmd/1 calling external functions" do
+    string = ":os.cmd(\"ls\")"
+
+    capture_log(fn ->
+      result = Octopus.Eval.eval_string(string, [])
+      assert result == string
+    end) =~ "[error]"
+  end
+
   test "it allows Access module" do
     args = %{"list" => [1, 2, 3]}
     result = Octopus.Eval.eval_string("get_in(args['list'], [Access.at(1)])", args: args)
