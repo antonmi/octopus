@@ -146,8 +146,8 @@ One can find the examples in the umbrella apps here:
 
 You can use them as a dependency or just copy-paste the code to your project.
 The client must implement three functions (see the [Octopus.Client](apps/octopus/lib/octopus/client.ex) behaviour):
-```elixir
-First:
+
+Start:
 ```elixir
 @spec start(map(), map(), atom()) :: {:ok, map()} | {:error, any()}
 def start(args, configs, service_module) do
@@ -159,17 +159,17 @@ end
 The returned map represents the state of the client. 
 It will be passed to the `call` and `stop` functions.
 
-Second:
+Stop:
 ```elixir
 @spec stop(map(), map(), any()) :: :ok | {:error, :not_found}
-def start(args, configs, state) do
+def stop(args, configs, state) do
   # `args` comes from Octopus.stop("my_service", args)
   # `configs` comes from the "stop" section of the specification
   # `state` is the map returned from the start function 
 end
 ```
 
-Third:
+Call:
 ```elixir
 @spec call(map(), map(), any()) :: {:ok, map()} | {:error, any()}
 def call(args, configs, state) do
