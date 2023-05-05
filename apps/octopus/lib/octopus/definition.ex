@@ -111,14 +111,14 @@ defmodule Octopus.Definition do
                                        |> :erlang.binary_to_term()
 
         def <%= name %>(args) do
-          struct = %Octopus.Call{
+          %Octopus.Call{
             client_module: <%= client_module %>,
             args: args,
             interface_configs: @interface_configs_<%= name %>,
             helpers: @helpers,
             state: state()
           }
-          Octopus.Call.call(struct)
+          |> Octopus.Call.call()
         end
       <% end %>
     end
