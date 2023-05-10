@@ -1,20 +1,19 @@
 defmodule Octopus.Eval do
   @moduledoc """
-  Evaluates strings with Elixir code. Used in Transform module.
+  The module evaluates strings with Elixir code. Used in Transform module.
   """
 
   require Logger
 
   @spec eval_string(String.t(), Keyword.t()) :: any() | String.t()
   def eval_string(string, args) when is_binary(string) do
-    do_eval_string(string, args)
+    {:ok, do_eval_string(string, args)}
   rescue
     error ->
-      Logger.error(inspect(error))
-      string
+      {:error, inspect(error)}
   end
 
-  def eval_string(arg, _args), do: arg
+  def eval_string(arg, _args), do: {:error, "#{arg} is not a string"}
 
   defp do_eval_string(string, args) do
     {value, _} =
