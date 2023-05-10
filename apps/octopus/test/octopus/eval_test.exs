@@ -69,6 +69,34 @@ defmodule Octopus.EvalTest do
     assert Octopus.Eval.eval_string(:aaa, []) == :aaa
   end
 
+  test "case condition" do
+    code = "case args[\"x\"] do
+      1 -> true
+      2 -> false
+    end
+    "
+    assert Octopus.Eval.eval_string(code, args: %{"x" => 1}) == true
+    assert Octopus.Eval.eval_string(code, args: %{"x" => 2}) == false
+  end
+
+  test "cond condition" do
+    code = "cond do
+      args[\"x\"] == 1 -> true
+      args[\"x\"] == 2 -> false
+      true -> nil
+    end
+    "
+    assert Octopus.Eval.eval_string(code, args: %{"x" => 1}) == true
+    assert Octopus.Eval.eval_string(code, args: %{"x" => 2}) == false
+    assert is_nil(Octopus.Eval.eval_string(code, args: %{"x" => 3}))
+  end
+
+  test "if and unless conditions" do
+    code = "if args[\"x\"] > 0, do: true, else: false"
+    assert Octopus.Eval.eval_string(code, args: %{"x" => 1}) == true
+    assert Octopus.Eval.eval_string(code, args: %{"x" => -1}) == false
+  end
+
   describe "with helper module" do
     defmodule Helpers do
       def add(args), do: args["x"] + args["y"]
@@ -78,7 +106,7 @@ defmodule Octopus.EvalTest do
       def mult(args), do: args["x"] * args["y"]
     end
 
-    test "it allows calling functions from the module" do
+    test "it allows calling functions from the helper module" do
       args = %{"x" => 1, "y" => 2}
       template = "add(args)"
 

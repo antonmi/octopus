@@ -80,6 +80,7 @@ defmodule Octopus.Eval do
           floor: 1,
           get_in: 2,
           hd: 1,
+          if: 2,
           inspect: 1,
           inspect: 2,
           is_atom: 1,
@@ -111,6 +112,7 @@ defmodule Octopus.Eval do
           to_string: 1,
           trunc: 1,
           tuple_size: 1,
+          unless: 2,
           update_in: 3
         ]
 
