@@ -27,10 +27,10 @@ jobs:
           path: deps
           key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
           restore-keys: ${{ runner.os }}-mix-
-      - name: cd to the core project
-        run: cd apps/octopus
       - name: Install dependencies
+        working-directory: ./apps/octopus
         run: mix deps.get
       - name: Run tests
         run: mix test
+        working-directory: ./apps/octopus
 
