@@ -88,16 +88,16 @@ defmodule Octopus.Definition do
 
       def stop(args \\\\ %{}) do
         <%= client_module %>.stop(args, @stop_configs, state())
-        :code.purge __MODULE__.State
-        :code.delete __MODULE__.State
+        :code.soft_purge(__MODULE__.State)
+        :code.delete(__MODULE__.State)
         :ok
       end
 
       def delete() do
-        :code.purge __MODULE__.State
-        :code.purge __MODULE__
-        :code.delete __MODULE__.State
-        :code.delete __MODULE__
+        :code.soft_purge(__MODULE__.State)
+        :code.soft_purge(__MODULE__)
+        :code.delete(__MODULE__.State)
+        :code.delete(__MODULE__)
         :ok
       end
 
