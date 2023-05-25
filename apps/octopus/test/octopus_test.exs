@@ -60,6 +60,19 @@ defmodule OctopusTest do
     end
   end
 
+  describe "definition/1" do
+    test "define and get definition" do
+      {:ok, "my-service"} = Octopus.define(@definition)
+
+      {:ok, definition} = Octopus.definition("my-service")
+      assert definition == @definition
+    end
+
+    test "error when no such service" do
+      {:error, :undefined} = Octopus.definition("my-service")
+    end
+  end
+
   describe "start/2" do
     test "when status is :undefined" do
       assert {:error, :undefined} = Octopus.start("my-service")
@@ -80,6 +93,19 @@ defmodule OctopusTest do
 
       assert {:error, "%RuntimeError{message: \"boom!\"}"} =
                Octopus.start("my-service", %{"fail" => "boom!"})
+    end
+  end
+
+  describe "state/1" do
+    test "define, start, and get state" do
+      {:ok, "my-service"} = Octopus.define(@definition)
+      assert {:ok, state} = Octopus.start("my-service")
+
+      {:ok, ^state} = Octopus.state("my-service")
+    end
+
+    test "error when no such service" do
+      {:error, :undefined} = Octopus.state("my-service")
     end
   end
 

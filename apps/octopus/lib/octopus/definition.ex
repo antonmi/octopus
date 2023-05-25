@@ -3,7 +3,7 @@ defmodule Octopus.Definition do
   Compiles the interface definition into a module.
   """
   alias Octopus.{Configs, Error, Utils}
-  defstruct [:name, :client, :interface, :helpers]
+  defstruct [:name, :client, :interface, :helpers, :json_definition]
 
   @spec new(map()) :: %Octopus.Definition{} | no_return()
   def new(definition) do
@@ -16,7 +16,8 @@ defmodule Octopus.Definition do
       name: name,
       client: client,
       interface: interface,
-      helpers: helpers
+      helpers: helpers,
+      json_definition: definition
     }
   end
 
@@ -31,6 +32,7 @@ defmodule Octopus.Definition do
 
     template()
     |> EEx.eval_string(
+      definition: definition.json_definition,
       namespace: namespace(),
       service_module: service_module,
       client_module: client_module,
@@ -56,6 +58,12 @@ defmodule Octopus.Definition do
   defp template() do
     """
     defmodule <%= namespace %>.<%= service_module %> do
+      @definition "<%= Base.encode64(:erlang.term_to_binary(definition)) %>"
+                     |> Base.decode64!()
+                     |> :erlang.binary_to_term()
+
+      def definition, do: @definition
+
       @start_configs "<%= Base.encode64(:erlang.term_to_binary(client_module_start_config)) %>"
                      |> Base.decode64!()
                      |> :erlang.binary_to_term()

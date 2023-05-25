@@ -4,14 +4,14 @@ defmodule Octopus do
   """
   alias Octopus.{Configs, Definition, Utils}
 
-  @spec define(map()) :: {:ok, String.t()} | {:error, any()}
+  @spec define(String.t()) :: {:ok, String.t()} | {:error, any()}
   def define(definition) when is_binary(definition) do
     definition
     |> Jason.decode!()
     |> define()
   end
 
-  @spec define(String.t()) :: {:ok, String.t()} | {:error, any()}
+  @spec define(map()) :: {:ok, String.t()} | {:error, any()}
   def define(definition) when is_map(definition) do
     definition = Definition.new(definition)
 
@@ -32,6 +32,22 @@ defmodule Octopus do
       {:error, error}
   end
 
+  @spec definition(String.t()) :: {:ok, map()} | {:error, any}
+  def definition(service_name) do
+    case status(service_name) do
+      :undefined ->
+        {:error, :undefined}
+
+      :not_ready ->
+        {:ok, module} = build_module(service_name)
+        {:ok, apply(module, :definition, [])}
+
+      :ready ->
+        {:ok, module} = build_module(service_name)
+        {:ok, apply(module, :definition, [])}
+    end
+  end
+
   @spec start(String.t(), map()) :: {:ok, map()} | {:error, any}
   def start(service_name, args \\ %{}) when is_binary(service_name) and is_map(args) do
     case status(service_name) do
@@ -48,6 +64,22 @@ defmodule Octopus do
   rescue
     error ->
       {:error, inspect(error)}
+  end
+
+  @spec state(String.t()) :: {:ok, map()} | {:error, any}
+  def state(service_name) do
+    case status(service_name) do
+      :undefined ->
+        {:error, :undefined}
+
+      :not_ready ->
+        {:ok, module} = build_module(service_name)
+        {:ok, apply(module, :state, [])}
+
+      :ready ->
+        {:ok, module} = build_module(service_name)
+        {:ok, apply(module, :state, [])}
+    end
   end
 
   @spec call(String.t(), String.t(), map()) :: {:ok, map()} | {:error, any()}
