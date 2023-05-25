@@ -82,6 +82,68 @@ defmodule OctopusAgent.RequestsTest do
     end
   end
 
+  describe "definition" do
+    setup do
+      OctopusAgent.define(@definition)
+      :ok
+    end
+
+    test "success case" do
+      conn =
+        :get
+        |> conn("/definition/my-service")
+        |> Router.call(%{})
+
+      assert conn.resp_body == @definition
+    end
+
+    test "error case, undefined service" do
+      conn =
+        :get
+        |> conn("/definition/undefined")
+        |> Router.call(%{})
+
+      assert conn.resp_body == "{\"error\":\":undefined\"}"
+    end
+  end
+
+  describe "state" do
+    setup do
+      OctopusAgent.define(@definition)
+      :ok
+    end
+
+    test "success case" do
+      OctopusAgent.start("my-service")
+
+      conn =
+        :get
+        |> conn("/state/my-service")
+        |> Router.call(%{})
+
+      assert conn.resp_body ==
+               "{\"args\":{},\"configs\":{\"baz\":10,\"foo\":\"bar\"},\"state\":\"here\"}"
+    end
+
+    test "error case, not ready" do
+      conn =
+        :get
+        |> conn("/state/my-service")
+        |> Router.call(%{})
+
+      assert conn.resp_body == "{\"error\":\":not_ready\"}"
+    end
+
+    test "error case, undefined service" do
+      conn =
+        :get
+        |> conn("/state/undefined")
+        |> Router.call(%{})
+
+      assert conn.resp_body == "{\"error\":\":undefined\"}"
+    end
+  end
+
   describe "start" do
     setup do
       OctopusAgent.define(@definition)

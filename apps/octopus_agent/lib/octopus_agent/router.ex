@@ -93,6 +93,26 @@ defmodule OctopusAgent.Router do
     send_resp(conn, 200, response)
   end
 
+  get "/definition/:name" do
+    case OctopusAgent.definition(conn.params["name"]) do
+      {:ok, response} ->
+        send_resp(conn, 200, response)
+
+      {:error, response} ->
+        send_resp(conn, 400, response)
+    end
+  end
+
+  get "/state/:name" do
+    case OctopusAgent.state(conn.params["name"]) do
+      {:ok, response} ->
+        send_resp(conn, 200, response)
+
+      {:error, response} ->
+        send_resp(conn, 400, response)
+    end
+  end
+
   match _ do
     send_resp(conn, 404, "NOT FOUND")
   end

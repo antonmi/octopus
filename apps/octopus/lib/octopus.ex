@@ -73,8 +73,7 @@ defmodule Octopus do
         {:error, :undefined}
 
       :not_ready ->
-        {:ok, module} = build_module(service_name)
-        {:ok, apply(module, :state, [])}
+        {:error, :not_ready}
 
       :ready ->
         {:ok, module} = build_module(service_name)

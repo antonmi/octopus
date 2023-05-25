@@ -72,4 +72,24 @@ defmodule OctopusAgent do
     status = Octopus.status(service_name)
     {:ok, Jason.encode!(%{"status" => inspect(status)})}
   end
+
+  def definition(service_name) do
+    case Octopus.definition(service_name) do
+      {:ok, state} ->
+        {:ok, Jason.encode!(state)}
+
+      {:error, error} ->
+        {:error, Jason.encode!(%{"error" => inspect(error)})}
+    end
+  end
+
+  def state(service_name) do
+    case Octopus.state(service_name) do
+      {:ok, state} ->
+        {:ok, Jason.encode!(state)}
+
+      {:error, error} ->
+        {:error, Jason.encode!(%{"error" => inspect(error)})}
+    end
+  end
 end
