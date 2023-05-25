@@ -17,7 +17,7 @@ OctopusAgent starts a web server that listens to the port specified in the `PORT
 - **POST /call/:name/:function** with JSON arguments
 - **POST /stop/:name** with JSON start options
 - **POST (or GET) /status/:name**
-- **POST /delete**
+- **POST /delete/:name**
 
 See [requests_test.exs](test/requests_test.exs) for more examples.
 
