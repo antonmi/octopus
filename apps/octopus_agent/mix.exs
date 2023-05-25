@@ -4,7 +4,7 @@ defmodule OctopusAgent.MixProject do
   def project do
     [
       app: :octopus_agent,
-      version: "0.3.1",
+      version: "0.4.4",
       elixir: "~> 1.14",
       description: description(),
       package: package(),
@@ -35,7 +35,7 @@ defmodule OctopusAgent.MixProject do
 
   defp deps do
     [
-      {:octopus, in_umbrella: true, only: [:dev, :test]},
+      {:octopus, "0.4.4"},
       {:plug_cowboy, "~> 2.6"},
       {:jason, "~> 1.4"},
       {:ex_doc, "~> 0.29", only: :dev, runtime: false}
