@@ -20,12 +20,10 @@ defmodule Octopus do
         Definition.define(definition)
 
       :not_ready ->
-        # delete the old module
         Definition.define(definition)
 
       :ready ->
-        # delete the old module
-        Definition.define(definition)
+        {:error, :already_started}
     end
   rescue
     error ->
@@ -145,16 +143,24 @@ defmodule Octopus do
 
       :not_ready ->
         {:ok, module} = build_module(service_name)
-        apply(module, :delete, [])
+        do_delete(module)
 
       :ready ->
         {:ok, module} = build_module(service_name)
         :ok = apply(module, :stop, [args])
-        apply(module, :delete, [])
+        do_delete(module)
     end
   rescue
     error ->
       {:error, error}
+  end
+
+  defp do_delete(module) do
+    :code.soft_purge(:"#{module}.State")
+    :code.soft_purge(module)
+    :code.delete(:"#{module}.State")
+    :code.delete(module)
+    :ok
   end
 
   @spec status(String.t()) :: :undefined | :not_ready | :ready

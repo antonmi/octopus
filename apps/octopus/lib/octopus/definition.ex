@@ -101,14 +101,6 @@ defmodule Octopus.Definition do
         :ok
       end
 
-      def delete() do
-        :code.soft_purge(__MODULE__.State)
-        :code.soft_purge(__MODULE__)
-        :code.delete(__MODULE__.State)
-        :code.delete(__MODULE__)
-        :ok
-      end
-
       @helpers "<%= Base.encode64(:erlang.term_to_binary(helpers)) %>"
                |> Base.decode64!()
                |> :erlang.binary_to_term()
