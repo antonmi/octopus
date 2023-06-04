@@ -6,6 +6,12 @@ defmodule Octopus.ElixirModuleExampleTest do
     Octopus.Test.Definitions.read_and_decode("elixir_module_example.json")
   end
 
+  setup do
+    on_exit(fn ->
+      Octopus.delete("another-service")
+    end)
+  end
+
   @service_module Octopus.Services.ElixirModuleService
 
   test "define and test elixir module" do

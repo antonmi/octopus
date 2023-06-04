@@ -109,6 +109,20 @@ defmodule OctopusTest do
     end
   end
 
+  describe "services" do
+    setup do
+      {:ok, "my-service"} = Octopus.define(@definition)
+      {:ok, "another-service"} = Octopus.define(Map.put(@definition, "name", "another-service"))
+      :ok
+    end
+
+    test "list services" do
+      services = Octopus.services()
+      assert Enum.member?(services, "my-service")
+      assert Enum.member?(services, "another-service")
+    end
+  end
+
   describe "call/3" do
     test "when status is :undefined" do
       assert {:error, :undefined} = Octopus.call("my-service", "my_function", %{"in" => "in"})

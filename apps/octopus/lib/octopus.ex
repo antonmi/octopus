@@ -30,6 +30,16 @@ defmodule Octopus do
       {:error, error}
   end
 
+  @spec services :: list(String.t())
+  def services do
+    :code.all_loaded()
+    |> Enum.map(&Atom.to_string(elem(&1, 0)))
+    |> Enum.filter(&String.starts_with?(&1, "Elixir.#{Configs.services_namespace()}."))
+    |> Enum.map(&String.to_existing_atom/1)
+    |> Enum.filter(&Keyword.has_key?(&1.__info__(:functions), :octopus_service_module?))
+    |> Enum.map(&apply(&1, :name, []))
+  end
+
   @spec definition(String.t()) :: {:ok, map()} | {:error, any}
   def definition(service_name) do
     case status(service_name) do

@@ -32,6 +32,7 @@ defmodule Octopus.Definition do
 
     template()
     |> EEx.eval_string(
+      name: definition.name,
       definition: definition.json_definition,
       namespace: namespace(),
       service_module: service_module,
@@ -62,7 +63,11 @@ defmodule Octopus.Definition do
                      |> Base.decode64!()
                      |> :erlang.binary_to_term()
 
+      def octopus_service_module?, do: true
+
       def definition, do: @definition
+
+      def name, do: "<%= name %>"
 
       @start_configs "<%= Base.encode64(:erlang.term_to_binary(client_module_start_config)) %>"
                      |> Base.decode64!()
