@@ -76,6 +76,7 @@ There are 5 **optional** steps in the interface definition:
 The definition can also be provided as an Elixir data structure:
 ```elixir
 definition = %{
+  "name" => "agify",
   "client" => %{
     "module" => "OctopusClientHttpFinch",
     "start" => %{"base_url" => "https://api.agify.io/"}
@@ -92,8 +93,7 @@ definition = %{
       "transform" => %{"age" => "get_in(args, ['body', 'age'])"},
       "output" => %{"age" => %{"type" => "number"}}
     }
-  },
-  "name" => "agify"
+  }
 }
 ```
 Please note that strings are used as keys in the input data structure. The idea is to close to the JSON as possible, and JSON doesn't have atom type.
