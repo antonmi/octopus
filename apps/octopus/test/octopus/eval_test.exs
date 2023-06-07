@@ -34,6 +34,33 @@ defmodule Octopus.EvalTest do
     assert result == "Anton"
   end
 
+  test "it allows List module" do
+    args = %{"list" => [1, 2, 3]}
+    assert {:ok, 1} = Octopus.Eval.eval_string("List.first(args['list'])", args: args)
+    args = %{"list" => []}
+    assert {:ok, 5} = Octopus.Eval.eval_string("List.first(args['list'], 5)", args: args)
+  end
+
+  test "it allows Enum module" do
+    args = %{"list" => [1, 2, 3]}
+    assert {:ok, 1} = Octopus.Eval.eval_string("Enum.min(args['list'])", args: args)
+
+    assert {:ok, 6} =
+             Octopus.Eval.eval_string("Enum.reduce(args['list'], &(&1 + &2))", args: args)
+  end
+
+  test "it allows Map module" do
+    args = %{"map" => %{"a" => 1, "b" => 2}}
+    assert {:ok, 1} = Octopus.Eval.eval_string("Map.get(args['map'], 'a')", args: args)
+
+    assert {:ok, ["a", "b"]} = Octopus.Eval.eval_string("Map.keys(args['map'])", args: args)
+  end
+
+  test "it allows && and ||" do
+    assert {:ok, true} = Octopus.Eval.eval_string("true && true", [])
+    assert {:ok, true} = Octopus.Eval.eval_string("false || true", [])
+  end
+
   test "to_string" do
     args = %{"x" => 1}
     {:ok, result} = Octopus.Eval.eval_string("to_string(args['x'])", args: args)

@@ -37,6 +37,15 @@ defmodule Octopus.Eval do
       {{:., _, [{:__aliases__, _, [:Access]}, _]}, _, _} = code ->
         code
 
+      {{:., _, [{:__aliases__, _, [:List]}, _]}, _, _} = code ->
+        code
+
+      {{:., _, [{:__aliases__, _, [:Enum]}, _]}, _, _} = code ->
+        code
+
+      {{:., _, [{:__aliases__, _, [:Map]}, _]}, _, _} = code ->
+        code
+
       {{:., _, _}, _, _} = bad ->
         raise("Non local call #{inspect(bad)}")
 
@@ -71,6 +80,9 @@ defmodule Octopus.Eval do
           =~: 2,
           >: 2,
           >=: 2,
+          &&: 2,
+          ||: 2,
+          |>: 2,
           abs: 1,
           byte_size: 1,
           ceil: 1,

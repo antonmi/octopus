@@ -50,7 +50,7 @@ defmodule OctopusClientHttpFinchTest do
 
       args = %{
         "base_url" => "#{@base_url}:#{bypass.port}",
-        "headers" => @headers,
+        "headers" => %{"Another" => "header"},
         "pool_size" => 10
       }
 
@@ -62,6 +62,7 @@ defmodule OctopusClientHttpFinchTest do
     test "call the client", %{bypass: bypass, state: state} do
       Bypass.expect(bypass, "GET", "/path", fn conn ->
         assert Enum.member?(conn.req_headers, {"content-type", "application/json"})
+        assert Enum.member?(conn.req_headers, {"another", "header"})
         assert conn.params == %{"a" => "1", "b" => "c"}
         Plug.Conn.resp(conn, 200, Jason.encode!(%{"hello" => "world"}))
       end)
