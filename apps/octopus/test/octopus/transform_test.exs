@@ -15,7 +15,8 @@ defmodule Octopus.TransformTest do
         "null" => nil,
         "params" => %{
           "a" => "args[\"baz\"]",
-          "b" => %{"c" => "args[\"foo\"]"}
+          "b" => %{"c" => "args[\"foo\"]"},
+          "path" => "'/users/' <> args['foo']"
         },
         "headers" => %{"header" => "args[\"h\"]"}
       }
@@ -27,7 +28,7 @@ defmodule Octopus.TransformTest do
                "headers" => %{"header" => "haha"},
                "null" => nil,
                "number" => 100_500,
-               "params" => %{"a" => 1, "b" => %{"c" => "bar"}},
+               "params" => %{"a" => 1, "b" => %{"c" => "bar"}, "path" => "/users/bar"},
                "x" => "/path/bar",
                "y" => [1, 1, "haha"]
              }
