@@ -19,11 +19,22 @@ defmodule Octopus.CallErrorsTest do
     end
 
     def call(%{"foo" => foo}, _configs, _state) do
-      if foo == "fail" do
-        raise "fail"
-      end
+      case foo do
+        "fail" ->
+          raise "fail"
 
-      {:ok, %{"bar" => foo <> "baz"}}
+        "error" ->
+          {:error, %{"message" => "ooops", "data" => "data"}}
+
+        "error_struct" ->
+          {:error, %RuntimeError{message: "ooops"}}
+
+        "error_string" ->
+          {:error, "ooops"}
+
+        foo ->
+          {:ok, %{"bar" => foo <> "baz"}}
+      end
     end
 
     def stop(_args, _configs, state) do
@@ -176,6 +187,41 @@ defmodule Octopus.CallErrorsTest do
       assert error.type == :call
       assert error.message == "fail"
       assert is_list(error.stacktrace)
+    end
+  end
+
+  describe "handling a error with client_error" do
+    test "error call" do
+      define_and_start(@definition)
+
+      {:ok, result} = Octopus.call("buggy-service", "my_function", %{"in" => "error"})
+      assert result == %{"data" => "data", "error" => true, "message" => "ooops"}
+    end
+
+    test "error call when there is no client_error" do
+      @definition
+      |> put_in(["interface", "my_function", "client_error"], nil)
+      |> define_and_start()
+
+      {:error, %CallError{} = error} =
+        Octopus.call("buggy-service", "my_function", %{"in" => "error"})
+
+      assert error.type == :call
+      assert error.message == "%{\"data\" => \"data\", \"message\" => \"ooops\"}"
+    end
+
+    test "error_struct call" do
+      define_and_start(@definition)
+
+      {:ok, result} = Octopus.call("buggy-service", "my_function", %{"in" => "error_struct"})
+      assert result == %{"data" => nil, "error" => true, "message" => "ooops"}
+    end
+
+    test "error_string call" do
+      define_and_start(@definition)
+
+      {:ok, result} = Octopus.call("buggy-service", "my_function", %{"in" => "error_string"})
+      assert result == %{"data" => nil, "error" => true, "message" => "ooops"}
     end
   end
 end

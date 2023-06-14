@@ -91,7 +91,9 @@ defmodule Octopus.CallTest do
         interface_configs: interface_configs
       }
 
-      assert {:error, :some_error} = Call.call(struct)
+      {:error, %CallError{} = error} = Call.call(struct)
+      assert error.type == :call
+      assert error.message == ":some_error"
     end
   end
 end
