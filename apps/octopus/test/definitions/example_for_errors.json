@@ -1,0 +1,37 @@
+{
+  "name": "example-service-for-errors",
+  "client": {
+    "module": "todo",
+    "start": {
+      "foo": "bar",
+      "baz": 10
+    }
+  },
+  "interface": {
+    "my_function": {
+      "input": {
+        "in": {"type": "string"}
+      },
+      "prepare": {
+        "foo": "args['in']"
+      },
+      "call": {},
+      "client_error": {
+        "error": true,
+        "message": "args['message']",
+        "data": "args['data']"
+      },
+      "transform": {
+        "out": "args['bar']"
+      },
+      "output": {
+        "out": {"type": "string"}
+      }
+    },
+    "simple": {
+      "input": {"foo":  {"type": "string"}},
+      "output": {"bar":  {"type": "string"}}
+    },
+    "empty": {}
+  }
+}
