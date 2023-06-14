@@ -8,11 +8,11 @@ defmodule Octopus.GithubServiceTest do
     File.read!("#{path}/github.json")
   end
 
-  setup_all do
+  setup do
     {:ok, "github"} = Octopus.define(read_definition())
     {:ok, _state} = Octopus.start("github")
 
-    :ok
+    on_exit(fn -> Octopus.delete("github") end)
   end
 
   test "find_users" do
@@ -26,4 +26,11 @@ defmodule Octopus.GithubServiceTest do
     {:ok, result} = Octopus.call("github", "get_followers", %{"username" => "antonmi"})
     assert is_list(result["followers"])
   end
+
+  #  test "get_followers with client error" do
+  #
+  #    {:ok, result} = Octopus.call("github", "get_followers", %{"username" => "the-is-no-such-username"})
+  #    |> IO.inspect
+  #    assert is_list(result["followers"])
+  #  end
 end
