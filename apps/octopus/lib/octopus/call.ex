@@ -49,49 +49,74 @@ defmodule Octopus.Call do
   end
 
   defp do_call(client_module, interface_configs, args, state, helpers) do
-    client_error_configs = fetch_client_error_configs(interface_configs)
+    error_configs = Map.get(interface_configs, "error", false)
 
     case apply(client_module, :call, [args, Map.get(interface_configs, "call", %{}), state]) do
       {:ok, result} ->
         {:ok, result}
 
-      {:error, args} ->
-        handle_error(client_error_configs, args, helpers)
+      {:error, error} ->
+        handle_error(error_configs, error, helpers)
     end
   rescue
     error ->
       {:error,
-       %CallError{type: :call, message: Exception.message(error), stacktrace: __STACKTRACE__}}
+       %CallError{
+         step: :call,
+         error: error,
+         message: Exception.message(error),
+         stacktrace: Exception.format_stacktrace(__STACKTRACE__)
+       }}
   end
 
-  defp fetch_client_error_configs(interface_configs) do
-    Map.get(interface_configs, "client_error") ||
-      Map.get(interface_configs, "client-error") ||
-      false
-  end
+  defp handle_error(error_configs, error, helpers) do
+    {error, message} =
+      case error do
+        string when is_binary(string) ->
+          {string, string}
 
-  defp handle_error(client_error_configs, args, helpers) do
-    case {client_error_configs, args} do
-      {false, _args} ->
-        {:error, %CallError{type: :call, message: inspect(args)}}
+        exception when is_exception(exception) ->
+          {exception, Exception.message(exception)}
 
-      {_, string} when is_binary(string) ->
-        {:skip, transform_error(%{"message" => string}, client_error_configs, helpers)}
+        args when is_map(args) ->
+          {args, inspect(args)}
 
-      {_, exception} when is_exception(exception) ->
-        {:skip,
-         transform_error(
-           %{"message" => Exception.message(exception)},
-           client_error_configs,
-           helpers
-         )}
+        other ->
+          {other, inspect(other)}
+      end
 
-      {_, args} when is_map(args) ->
-        {:skip, transform_error(args, client_error_configs, helpers)}
+    if error_configs do
+      {:skip,
+       transform_error(
+         %{
+           "step" => "call",
+           "error" => allow_only_binary_and_map(error),
+           "message" => message,
+           "stacktrace" => Exception.format_stacktrace()
+         },
+         error_configs,
+         helpers
+       )}
+    else
+      {:error,
+       %CallError{
+         step: :call,
+         error: error,
+         message: message,
+         stacktrace: Exception.format_stacktrace()
+       }}
     end
   end
 
-  defp transform_error(args, client_error_configs, helpers) do
-    Transform.transform(args, client_error_configs, helpers, :client_error)
+  defp allow_only_binary_and_map(error) do
+    if is_binary(error) or (is_map(error) and not is_exception(error)) do
+      error
+    else
+      inspect(error)
+    end
+  end
+
+  defp transform_error(args, error_configs, helpers) do
+    Transform.transform(args, error_configs, helpers, :error)
   end
 end

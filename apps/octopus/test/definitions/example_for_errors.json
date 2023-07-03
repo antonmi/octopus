@@ -16,10 +16,11 @@
         "foo": "args['in']"
       },
       "call": {},
-      "client_error": {
-        "error": true,
+      "error": {
+        "step": "args['step']",
+        "error": "args['error']",
         "message": "args['message']",
-        "data": "args['data']"
+        "stacktrace": "args['stacktrace']"
       },
       "transform": {
         "out": "args['bar']"

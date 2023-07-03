@@ -16,7 +16,11 @@ defmodule Octopus.Transform do
   rescue
     error ->
       {:error,
-       %CallError{type: context, message: Exception.message(error), stacktrace: __STACKTRACE__}}
+       %CallError{
+         step: context,
+         message: Exception.message(error),
+         stacktrace: Exception.format_stacktrace(__STACKTRACE__)
+       }}
   end
 
   defp travers_args(args, config, helpers) do

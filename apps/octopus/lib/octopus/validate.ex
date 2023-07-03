@@ -15,12 +15,23 @@ defmodule Octopus.Validate do
         {:ok, args}
 
       {:error, errors} when is_list(errors) ->
-        {:error, %CallError{type: context, message: format_errors(errors)}}
+        {:error,
+         %CallError{
+           step: context,
+           error: errors,
+           message: format_errors(errors),
+           stacktrace: Exception.format_stacktrace()
+         }}
     end
   rescue
     error ->
       {:error,
-       %CallError{type: context, message: Exception.message(error), stacktrace: __STACKTRACE__}}
+       %CallError{
+         step: context,
+         error: error,
+         message: Exception.message(error),
+         stacktrace: Exception.format_stacktrace(__STACKTRACE__)
+       }}
   end
 
   defp wrap_properties(%{"properties" => properties} = schema) when is_map(properties) do

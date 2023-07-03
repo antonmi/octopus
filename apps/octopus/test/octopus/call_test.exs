@@ -47,7 +47,7 @@ defmodule Octopus.CallTest do
       args = %{"foo" => 1}
       struct = %Call{client_module: Client, args: args, interface_configs: @interface_configs}
       {:error, %CallError{} = error} = Call.call(struct)
-      assert error.type == :input
+      assert error.step == :input
       assert error.message =~ "Type mismatch."
     end
 
@@ -55,7 +55,7 @@ defmodule Octopus.CallTest do
       interface_configs = put_in(@interface_configs["input"]["required"], ["foo"])
       struct = %Call{client_module: Client, args: %{}, interface_configs: interface_configs}
       {:error, %CallError{} = error} = Call.call(struct)
-      assert error.type == :input
+      assert error.step == :input
       assert error.message =~ "Required property foo was not present"
     end
 
@@ -64,7 +64,7 @@ defmodule Octopus.CallTest do
       struct = %Call{client_module: Client, args: %{}, interface_configs: interface_configs}
 
       {:error, %CallError{} = error} = Call.call(struct)
-      assert error.type == :input
+      assert error.step == :input
       assert error.message =~ "schema did not pass validation"
     end
 
@@ -78,7 +78,7 @@ defmodule Octopus.CallTest do
       }
 
       {:error, %CallError{} = error} = Call.call(struct)
-      assert error.type == :output
+      assert error.step == :output
       assert error.message =~ "Type mismatch. Expected Integer but got String."
     end
 
@@ -92,7 +92,7 @@ defmodule Octopus.CallTest do
       }
 
       {:error, %CallError{} = error} = Call.call(struct)
-      assert error.type == :call
+      assert error.step == :call
       assert error.message == ":some_error"
     end
   end

@@ -73,9 +73,10 @@ defmodule Octopus.CallErrorsTest do
     test "wrong type" do
       define_and_start(@definition)
       {:error, %CallError{} = error} = Octopus.call("buggy-service", "my_function", %{"in" => 1})
-      assert error.type == :input
+      assert error.step == :input
+      assert is_list(error.error)
       assert error.message == "#/in:Type mismatch. Expected String but got Integer."
-      refute error.stacktrace
+      assert is_binary(error.stacktrace)
     end
 
     test "wrong type specification" do
@@ -85,9 +86,10 @@ defmodule Octopus.CallErrorsTest do
 
       {:error, %CallError{} = error} = Octopus.call("buggy-service", "my_function", %{"in" => 1})
 
-      assert error.type == :input
+      assert error.step == :input
+      assert is_struct(error.error, ExJsonSchema.Schema.InvalidSchemaError)
       assert error.message =~ "schema did not pass validation against"
-      assert is_list(error.stacktrace)
+      assert is_binary(error.stacktrace)
     end
   end
 
@@ -102,9 +104,10 @@ defmodule Octopus.CallErrorsTest do
       {:error, %CallError{} = error} =
         Octopus.call("buggy-service", "my_function", %{"in" => "in"})
 
-      assert error.type == :output
+      assert error.step == :output
+      assert is_list(error.error)
       assert error.message == "#/out:Type mismatch. Expected String but got Integer."
-      refute error.stacktrace
+      assert is_binary(error.stacktrace)
     end
 
     test "wrong type specification" do
@@ -115,9 +118,10 @@ defmodule Octopus.CallErrorsTest do
       {:error, %CallError{} = error} =
         Octopus.call("buggy-service", "my_function", %{"in" => "in"})
 
-      assert error.type == :output
+      assert error.step == :output
+      assert is_struct(error.error, ExJsonSchema.Schema.InvalidSchemaError)
       assert error.message =~ "schema did not pass validation against"
-      assert is_list(error.stacktrace)
+      assert is_binary(error.stacktrace)
     end
   end
 
@@ -130,9 +134,9 @@ defmodule Octopus.CallErrorsTest do
       {:error, %CallError{} = error} =
         Octopus.call("buggy-service", "my_function", %{"in" => "in"})
 
-      assert error.type == :prepare
+      assert error.step == :prepare
       assert error.message =~ "Non local call"
-      assert is_list(error.stacktrace)
+      assert is_binary(error.stacktrace)
     end
 
     test "when error in definition" do
@@ -143,9 +147,9 @@ defmodule Octopus.CallErrorsTest do
       {:error, %CallError{} = error} =
         Octopus.call("buggy-service", "my_function", %{"in" => "in"})
 
-      assert error.type == :prepare
+      assert error.step == :prepare
       assert error.message =~ "protocol Enumerable not implemented"
-      assert is_list(error.stacktrace)
+      assert is_binary(error.stacktrace)
     end
   end
 
@@ -158,9 +162,9 @@ defmodule Octopus.CallErrorsTest do
       {:error, %CallError{} = error} =
         Octopus.call("buggy-service", "my_function", %{"in" => "in"})
 
-      assert error.type == :transform
+      assert error.step == :transform
       assert error.message =~ "Non local call"
-      assert is_list(error.stacktrace)
+      assert is_binary(error.stacktrace)
     end
 
     test "when error in definition" do
@@ -171,9 +175,9 @@ defmodule Octopus.CallErrorsTest do
       {:error, %CallError{} = error} =
         Octopus.call("buggy-service", "my_function", %{"in" => "in"})
 
-      assert error.type == :transform
+      assert error.step == :transform
       assert error.message =~ "protocol Enumerable not implemented"
-      assert is_list(error.stacktrace)
+      assert is_binary(error.stacktrace)
     end
   end
 
@@ -184,44 +188,69 @@ defmodule Octopus.CallErrorsTest do
       {:error, %CallError{} = error} =
         Octopus.call("buggy-service", "my_function", %{"in" => "fail"})
 
-      assert error.type == :call
+      assert error.step == :call
+      assert error.error == %RuntimeError{message: "fail"}
       assert error.message == "fail"
-      assert is_list(error.stacktrace)
+      assert is_binary(error.stacktrace)
     end
   end
 
-  describe "handling a error with client_error" do
+  describe "handling a error with error" do
     test "error call" do
       define_and_start(@definition)
 
       {:ok, result} = Octopus.call("buggy-service", "my_function", %{"in" => "error"})
-      assert result == %{"data" => "data", "error" => true, "message" => "ooops"}
+
+      assert result["step"] == "call"
+      assert result["error"] == %{"data" => "data", "message" => "ooops"}
+      assert result["message"] == "%{\"data\" => \"data\", \"message\" => \"ooops\"}"
+      assert is_binary(result["stacktrace"])
     end
 
-    test "error call when there is no client_error" do
+    test "error call when there is no error" do
       @definition
-      |> put_in(["interface", "my_function", "client_error"], nil)
+      |> put_in(["interface", "my_function", "error"], nil)
       |> define_and_start()
 
       {:error, %CallError{} = error} =
         Octopus.call("buggy-service", "my_function", %{"in" => "error"})
 
-      assert error.type == :call
+      assert error.step == :call
+      assert error.error == %{"data" => "data", "message" => "ooops"}
       assert error.message == "%{\"data\" => \"data\", \"message\" => \"ooops\"}"
+      assert is_binary(error.stacktrace)
     end
 
     test "error_struct call" do
       define_and_start(@definition)
 
       {:ok, result} = Octopus.call("buggy-service", "my_function", %{"in" => "error_struct"})
-      assert result == %{"data" => nil, "error" => true, "message" => "ooops"}
+      assert result["step"] == "call"
+      assert result["error"] == "%RuntimeError{message: \"ooops\"}"
+      assert result["message"] == "ooops"
+      assert is_binary(result["stacktrace"])
     end
 
     test "error_string call" do
       define_and_start(@definition)
 
       {:ok, result} = Octopus.call("buggy-service", "my_function", %{"in" => "error_string"})
-      assert result == %{"data" => nil, "error" => true, "message" => "ooops"}
+      assert result["step"] == "call"
+      assert result["error"] == "ooops"
+      assert result["message"] == "ooops"
+      assert is_binary(result["stacktrace"])
+    end
+
+    test "when exception is raised it returns ClientError" do
+      define_and_start(@definition)
+
+      {:error, %CallError{} = error} =
+        Octopus.call("buggy-service", "my_function", %{"in" => "fail"})
+
+      assert error.step == :call
+      assert error.error == %RuntimeError{message: "fail"}
+      assert error.message == "fail"
+      assert is_binary(error.stacktrace)
     end
   end
 end
