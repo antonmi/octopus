@@ -145,7 +145,7 @@ defmodule OctopusTest do
       {:ok, "my-service"} = Octopus.define(@definition)
       assert {:ok, _state} = Octopus.start("my-service")
 
-      assert {:error, %RuntimeError{__exception__: true, message: "fail"}} =
+      assert {:error, %Octopus.CallError{message: "fail", step: :call}} =
                Octopus.call("my-service", "my_function", %{"in" => "fail"})
     end
   end

@@ -3,9 +3,10 @@ defmodule Octopus.Validate do
   Validates input and output with ExJsonSchema.Validator
   """
   alias ExJsonSchema.Validator
+  alias Octopus.CallError
 
-  @spec validate(map(), map()) :: {:ok, map()} | {:error, any()}
-  def validate(args, schema) do
+  @spec validate(map(), map(), atom()) :: {:ok, map()} | {:error, any()}
+  def validate(args, schema, context \\ :undefined) do
     schema
     |> wrap_properties()
     |> Validator.validate(args)
@@ -13,9 +14,24 @@ defmodule Octopus.Validate do
       :ok ->
         {:ok, args}
 
-      {:error, errors} ->
-        {:error, errors}
+      {:error, errors} when is_list(errors) ->
+        {:error,
+         %CallError{
+           step: context,
+           error: errors,
+           message: format_errors(errors),
+           stacktrace: Exception.format_stacktrace()
+         }}
     end
+  rescue
+    error ->
+      {:error,
+       %CallError{
+         step: context,
+         error: error,
+         message: Exception.message(error),
+         stacktrace: Exception.format_stacktrace(__STACKTRACE__)
+       }}
   end
 
   defp wrap_properties(%{"properties" => properties} = schema) when is_map(properties) do
@@ -30,5 +46,11 @@ defmodule Octopus.Validate do
       "properties" => schema,
       "required" => required
     }
+  end
+
+  defp format_errors(errors) do
+    errors
+    |> Enum.map(fn {message, field} -> "#{field}:#{message}" end)
+    |> Enum.join("\n")
   end
 end

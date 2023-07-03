@@ -7,13 +7,10 @@ defmodule Octopus.Eval do
 
   @spec eval_string(String.t(), Keyword.t()) :: any() | String.t()
   def eval_string(string, args) when is_binary(string) do
-    {:ok, do_eval_string(string, args)}
-  rescue
-    error ->
-      {:error, inspect(error)}
+    do_eval_string(string, args)
   end
 
-  def eval_string(arg, _args), do: {:error, "#{arg} is not a string"}
+  def eval_string(arg, _args), do: raise("#{arg} is not a string")
 
   defp do_eval_string(string, args) do
     {value, _} =
@@ -44,6 +41,9 @@ defmodule Octopus.Eval do
         code
 
       {{:., _, [{:__aliases__, _, [:Map]}, _]}, _, _} = code ->
+        code
+
+      {{:., _, [{:__aliases__, _, [:String]}, _]}, _, _} = code ->
         code
 
       {{:., _, _}, _, _} = bad ->

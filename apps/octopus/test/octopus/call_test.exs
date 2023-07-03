@@ -1,7 +1,7 @@
 defmodule Octopus.CallTest do
   use ExUnit.Case, async: true
 
-  alias Octopus.Call
+  alias Octopus.{Call, CallError}
 
   defmodule Client do
     def call(args, configs, _state) do
@@ -46,25 +46,26 @@ defmodule Octopus.CallTest do
     test "when input has invalid type" do
       args = %{"foo" => 1}
       struct = %Call{client_module: Client, args: args, interface_configs: @interface_configs}
-      {:error, error} = Call.call(struct)
-      assert error == [{"Type mismatch. Expected String but got Integer.", "#/foo"}]
+      {:error, %CallError{} = error} = Call.call(struct)
+      assert error.step == :input
+      assert error.message =~ "Type mismatch."
     end
 
     test "when input doesn't have required field" do
       interface_configs = put_in(@interface_configs["input"]["required"], ["foo"])
       struct = %Call{client_module: Client, args: %{}, interface_configs: interface_configs}
-      {:error, error} = Call.call(struct)
-      assert error == [{"Required property foo was not present.", "#"}]
+      {:error, %CallError{} = error} = Call.call(struct)
+      assert error.step == :input
+      assert error.message =~ "Required property foo was not present"
     end
 
     test "when input has invalid configs" do
       interface_configs = put_in(@interface_configs["input"]["required"], 123)
       struct = %Call{client_module: Client, args: %{}, interface_configs: interface_configs}
 
-      assert_raise(
-        ExJsonSchema.Schema.InvalidSchemaError,
-        fn -> Call.call(struct) end
-      )
+      {:error, %CallError{} = error} = Call.call(struct)
+      assert error.step == :input
+      assert error.message =~ "schema did not pass validation"
     end
 
     test "error in output" do
@@ -76,8 +77,9 @@ defmodule Octopus.CallTest do
         interface_configs: interface_configs
       }
 
-      {:error, error} = Call.call(struct)
-      assert error == [{"Type mismatch. Expected Integer but got String.", "#/y"}]
+      {:error, %CallError{} = error} = Call.call(struct)
+      assert error.step == :output
+      assert error.message =~ "Type mismatch. Expected Integer but got String."
     end
 
     test "error in adapter call" do
@@ -89,7 +91,9 @@ defmodule Octopus.CallTest do
         interface_configs: interface_configs
       }
 
-      assert {:error, :some_error} = Call.call(struct)
+      {:error, %CallError{} = error} = Call.call(struct)
+      assert error.step == :call
+      assert error.message == ":some_error"
     end
   end
 end

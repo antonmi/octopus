@@ -1,0 +1,24 @@
+{
+  "name": "error-service",
+  "client": {
+    "module": "OctopusClientHttpFinch",
+    "start": {
+      "base_url": "https://no-such-url/"
+    }
+  },
+  "interface": {
+    "do_call": {
+      "prepare": {
+        "method": "GET",
+        "path": "/"
+      },
+      "call": {
+        "parse_json_body": true
+      },
+      "error": {
+        "error": true,
+        "message": "args['message']"
+      }
+    }
+  }
+}

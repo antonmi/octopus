@@ -7,11 +7,11 @@ defmodule Octopus.AgifyServiceTest do
     File.read!("#{path}/agify.json")
   end
 
-  setup_all do
+  setup do
     {:ok, "agify"} = Octopus.define(read_definition())
     {:ok, _state} = Octopus.start("agify")
 
-    :ok
+    on_exit(fn -> Octopus.delete("agify") end)
   end
 
   test "age_for_name" do

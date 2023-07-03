@@ -2,16 +2,25 @@ defmodule Octopus.Transform do
   @moduledoc """
   Transforms the arguments according to the given configuration in "prepare" and "transform".
   """
+  alias Octopus.CallError
   alias Octopus.Eval
 
-  def transform(args, config, helpers \\ [])
+  def transform(args, config, helpers \\ [], context \\ :undefined)
 
-  def transform(args, false, _helpers) do
+  def transform(args, false, _helpers, _context) do
     {:ok, args}
   end
 
-  def transform(args, config, helpers) do
+  def transform(args, config, helpers, context) do
     {:ok, travers_args(args, config, helpers)}
+  rescue
+    error ->
+      {:error,
+       %CallError{
+         step: context,
+         message: Exception.message(error),
+         stacktrace: Exception.format_stacktrace(__STACKTRACE__)
+       }}
   end
 
   defp travers_args(args, config, helpers) do
@@ -36,13 +45,7 @@ defmodule Octopus.Transform do
 
   defp parse_value(value, args, helpers) when is_binary(value) do
     if String.contains?(value, "args") do
-      case Eval.eval_string(value, args: args, helpers: helpers) do
-        {:ok, result} ->
-          result
-
-        {:error, error} ->
-          error
-      end
+      Eval.eval_string(value, args: args, helpers: helpers)
     else
       value
     end

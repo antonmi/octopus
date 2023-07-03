@@ -26,22 +26,22 @@ defmodule Octopus.ValidateTest do
 
     test "when args are invalid" do
       args = %{"foo" => 2}
-      {:error, [error]} = Validate.validate(args, @schema)
-      assert error == {"Type mismatch. Expected String but got Integer.", "#/foo"}
+      {:error, error} = Validate.validate(args, @schema)
+      assert error.message == "#/foo:Type mismatch. Expected String but got Integer."
     end
 
     test "it accepts schema without 'properties'" do
       args = %{"foo" => 2}
       schema = %{"foo" => %{"type" => "string"}}
-      {:error, [error]} = Validate.validate(args, schema)
-      assert error == {"Type mismatch. Expected String but got Integer.", "#/foo"}
+      {:error, error} = Validate.validate(args, schema)
+      assert error.message == "#/foo:Type mismatch. Expected String but got Integer."
     end
 
     test "it handles the 'required' field" do
       args = %{"foo" => "bar"}
       schema = Map.merge(@schema["properties"], %{"required" => ["foo", "baz"]})
-      {:error, [error]} = Validate.validate(args, schema)
-      assert error == {"Required property baz was not present.", "#"}
+      {:error, error} = Validate.validate(args, schema)
+      assert error.message =~ "Required property baz was not present."
     end
   end
 end
