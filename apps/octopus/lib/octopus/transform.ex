@@ -18,6 +18,7 @@ defmodule Octopus.Transform do
       {:error,
        %CallError{
          step: context,
+         error: error,
          message: Exception.message(error),
          stacktrace: Exception.format_stacktrace(__STACKTRACE__)
        }}

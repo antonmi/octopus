@@ -18,7 +18,7 @@ However, each such translation must be explicitly coded. And this leads to a dec
 These kinds of translations can be expressed in declarative way via specifications expressed as a data structure. 
 
 ### The solution
-The specification can be provided using a JSON data structure that describes the interface to a service.
+The specification can be provided using a JSON DSL that describes the interface to a service.
 The client library code is generated from the specification.
 The JSON is chosen as the specification language because it is easy to translate to Elixir data structures:
 JSON objects are translated to maps, JSON arrays are translated to lists, etc.
@@ -126,11 +126,49 @@ Octopus.start("agify")
 Then, the service can be called:
 ```elixir
 iex(1)> Octopus.call("agify", "age_for_name", %{"name" => "Anton"})
-%{"age" => 50}
+{:ok, %{"age" => 50}}
 ```
 Again, note, that strings are used as keys in the input data structure.
 
 See [`octopus_test.exs`](apps/octopus/test/octopus_test.exs) for other functions in Octopus.
+
+### Exceptions and error handling
+When exception happens in any step, Octopus will return
+```elixir
+{:error, %Octopus.CallError{}}
+```
+The `%Octopus.CallError{}` struct has the following fields:
+```text
+:step - :input | :prepare | :call | :transorm | :output | :error
+:error - original error,
+:message - string message,
+:stacktrace - stacktrace (string produced by Exception.format_stacktrace)
+```
+
+It is possible to handle "expected" client errors (not exceptions). If client returns `{:error, error}` tuple than the error can be processed in the "error" step.
+
+The "step", "error", "message", and "stacktrace" are available in "args"
+
+For example, if the "error" step is specified in the "interface" section
+
+```json
+"error": {
+  "step": "args['step']",
+  "error": "args['error']",
+  "message": "args['message']",
+  "stacktrace": "args['stacktrace']",
+  "foo": "unfortunately an error occured :("
+}
+```
+
+then Octopus will return `{:ok, result}`, where `result` will have the fields defined in the "error" step.
+
+The "transform" and "output" step will be skipped in that case.
+
+The following diagram represent the possible flows:
+
+<img src="images/octopus-data-flow.png" alt="Octopus data flow" width=800px>
+
 
 ### OctopusAgent
 Since we translate the interface to JSON it becomes easy to interact with them via HTTP JSON API.

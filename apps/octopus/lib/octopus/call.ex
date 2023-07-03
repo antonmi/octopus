@@ -43,6 +43,9 @@ defmodule Octopus.Call do
       {:skip, {:ok, args}} ->
         {:ok, args}
 
+      {:skip, {:error, error}} ->
+        {:error, error}
+
       {:error, error} ->
         {:error, error}
     end

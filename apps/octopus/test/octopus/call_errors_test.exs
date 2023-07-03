@@ -241,6 +241,20 @@ defmodule Octopus.CallErrorsTest do
       assert is_binary(result["stacktrace"])
     end
 
+    test "error in error" do
+      @definition
+      |> put_in(["interface", "my_function", "error", "error"], "args + args")
+      |> define_and_start()
+
+      {:error, %CallError{} = error} =
+        Octopus.call("buggy-service", "my_function", %{"in" => "error_string"})
+
+      assert error.step == :error
+      assert error.error == %ArithmeticError{message: "bad argument in arithmetic expression"}
+      assert error.message == "bad argument in arithmetic expression"
+      assert is_binary(error.stacktrace)
+    end
+
     test "when exception is raised it returns ClientError" do
       define_and_start(@definition)
 
