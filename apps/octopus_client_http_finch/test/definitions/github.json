@@ -48,6 +48,12 @@
       "call": {
         "parse_json_body": true
       },
+      "error": {
+        "step": "args['step']",
+        "error": "args['error']",
+        "message": "args['message']",
+        "stacktrace": "args['stacktrace']"
+      },
       "transform": {
         "followers": "args['body']"
       },

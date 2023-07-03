@@ -15,7 +15,7 @@
       "call": {
         "parse_json_body": true
       },
-      "client-error": {
+      "error": {
         "error": true,
         "message": "args['message']"
       }

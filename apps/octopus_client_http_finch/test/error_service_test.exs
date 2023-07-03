@@ -22,17 +22,19 @@ defmodule Octopus.ErrorServiceTest do
     assert result == %{"error" => true, "message" => "non-existing domain"}
   end
 
-  test "when there is client_error" do
+  test "when there is client error" do
     read_definition()
     |> Jason.decode!()
-    |> put_in(["interface", "do_call", "client-error"], nil)
+    |> put_in(["interface", "do_call", "error"], nil)
     |> define_and_start_service()
 
     assert {:error,
             %Octopus.CallError{
-              type: :call,
-              message: "%Mint.TransportError{reason: :nxdomain}",
-              stacktrace: nil
+              step: :call,
+              error: %Mint.TransportError{reason: :nxdomain},
+              message: "non-existing domain",
+              stacktrace: stacktrace
             }} = Octopus.call("error-service", "do_call", %{})
+    assert is_binary(stacktrace)
   end
 end

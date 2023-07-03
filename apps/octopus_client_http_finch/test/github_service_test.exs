@@ -27,10 +27,27 @@ defmodule Octopus.GithubServiceTest do
     assert is_list(result["followers"])
   end
 
-  #  test "get_followers with client error" do
-  #
-  #    {:ok, result} = Octopus.call("github", "get_followers", %{"username" => "the-is-no-such-username"})
-  #    |> IO.inspect
-  #    assert is_list(result["followers"])
-  #  end
+  describe "when there is client error" do
+    setup do
+      Octopus.delete("github")
+
+      definition =
+        read_definition()
+        |> Jason.decode!()
+        |> put_in(["client", "start", "base_url"], "https://no-such.url")
+
+      {:ok, "github"} = Octopus.define(definition)
+      {:ok, _state} = Octopus.start("github")
+      :ok
+    end
+
+    test "get_followers with client error" do
+      {:ok, result} =
+               Octopus.call("github", "get_followers", %{"username" => "antonmi"})
+      assert result["step"] == "call"
+      assert result["error"] == "%Mint.TransportError{reason: :nxdomain}"
+      assert result["message"] == "non-existing domain"
+      assert result["stacktrace"]
+    end
+  end
 end
