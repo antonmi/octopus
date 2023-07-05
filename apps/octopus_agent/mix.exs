@@ -35,7 +35,7 @@ defmodule OctopusAgent.MixProject do
 
   defp deps do
     [
-      {:octopus, "0.4.4"},
+      {:octopus, "0.5.0"},
       {:plug_cowboy, "~> 2.6"},
       {:jason, "~> 1.4"},
       {:ex_doc, "~> 0.29", only: :dev, runtime: false}
