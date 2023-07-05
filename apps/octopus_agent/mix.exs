@@ -4,7 +4,7 @@ defmodule OctopusAgent.MixProject do
   def project do
     [
       app: :octopus_agent,
-      version: "0.4.4",
+      version: "0.5.0",
       elixir: "~> 1.14",
       description: description(),
       package: package(),
