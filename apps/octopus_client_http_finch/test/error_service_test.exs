@@ -1,4 +1,4 @@
-defmodule Octopus.ErrorServiceTest do
+defmodule OctopusClientHttpFinch.ErrorServiceTest do
   use ExUnit.Case, async: true
 
   def read_definition() do

@@ -1,4 +1,4 @@
-defmodule Octopus.AgifyServiceTest do
+defmodule OctopusClientHttpFinch.AgifyServiceTest do
   use ExUnit.Case, async: true
 
   def read_definition() do

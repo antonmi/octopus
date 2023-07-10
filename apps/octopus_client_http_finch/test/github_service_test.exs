@@ -1,4 +1,4 @@
-defmodule Octopus.GithubServiceTest do
+defmodule OctopusClientHttpFinch.GithubServiceTest do
   use ExUnit.Case, async: true
   alias Octopus
 
