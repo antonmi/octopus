@@ -6,7 +6,7 @@ defmodule OctopusClientHttpFinch do
 
   @spec start(map(), map(), atom()) :: {:ok, map()} | {:error, :already_started}
   def start(args, configs, service_module) do
-    base_url = args["base_url"] || configs["base_url"]
+    base_url = args["base_url"] || configs["base_url"] || raise "base_url must be provided!"
     headers = Map.merge(configs["headers"] || %{}, args["headers"] || %{})
     pool_size = args["pool_size"] || configs["pool_size"] || @default_pool_size
 

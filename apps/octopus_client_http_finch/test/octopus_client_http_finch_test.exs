@@ -37,6 +37,12 @@ defmodule OctopusClientHttpFinchTest do
     end
   end
 
+  test "start without base_url" do
+    assert_raise RuntimeError, "base_url must be provided!", fn ->
+      OctopusClientHttpFinch.start(%{}, %{}, MyService)
+    end
+  end
+
   describe "call/3 with GET" do
     @args_for_get %{
       "method" => "GET",

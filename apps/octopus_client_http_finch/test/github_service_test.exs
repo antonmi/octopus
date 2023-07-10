@@ -42,8 +42,7 @@ defmodule Octopus.GithubServiceTest do
     end
 
     test "get_followers with client error" do
-      {:ok, result} =
-               Octopus.call("github", "get_followers", %{"username" => "antonmi"})
+      {:ok, result} = Octopus.call("github", "get_followers", %{"username" => "antonmi"})
       assert result["step"] == "call"
       assert result["error"] == "%Mint.TransportError{reason: :nxdomain}"
       assert result["message"] == "non-existing domain"
