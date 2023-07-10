@@ -167,7 +167,9 @@ The "transform" and "output" step will be skipped in that case.
 
 The following diagram represent the possible flows:
 
-<img src="images/octopus-data-flow.png" alt="Octopus data flow" width=800px>
+<img src="images/octopus-data-flow.png" 
+alt="Octopus data flow" 
+width=800px>
 
 
 ### OctopusAgent
@@ -246,4 +248,5 @@ You can use the `inc_by_one` function in the transformation step:
 ```
 
 ### TODO
+- use "Octopus.Lambda" ("octopus.lambda") instead of "octopus.elixir-module-client"
 - templates in service start/stop

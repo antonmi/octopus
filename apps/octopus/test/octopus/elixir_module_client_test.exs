@@ -8,6 +8,7 @@ defmodule Octopus.ElixirModuleExampleTest do
 
   setup do
     on_exit(fn ->
+      Octopus.delete("elixir-module-service")
       Octopus.delete("another-service")
     end)
   end
