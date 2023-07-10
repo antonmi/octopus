@@ -5,7 +5,7 @@ defmodule Octopus.MixProject do
     [
       app: :octopus,
       version: "0.5.0",
-      elixir: "~> 1.12",
+      elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       description: description(),
       package: package(),

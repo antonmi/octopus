@@ -1,0 +1,71 @@
+{
+  "name": "store",
+  "client": {
+    "module": "OctopusClientAgentKVStore"
+  },
+  "interface": {
+    "set": {
+      "input": {
+        "required": ["key", "value"]
+      },
+      "prepare": {
+        "operation": "set",
+        "key": "args['key']",
+        "value": "args['value']"
+      },
+      "call": {},
+      "transform": {
+        "ok": "args"
+      },
+      "output": {
+        "ok": {}
+      }
+    },
+    "get": {
+      "input": {
+        "required": ["key"]
+      },
+      "prepare": {
+        "operation": "get",
+        "key": "args['key']"
+      },
+      "call": {},
+      "transform": {
+        "value": "args"
+      },
+      "output": {
+        "value": {}
+      }
+    },
+    "getset": {
+      "input": {
+        "required": ["key", "value"]
+      },
+      "prepare": {
+        "operation": "getset",
+        "key": "args['key']",
+        "value": "args['value']"
+      },
+      "call": {},
+      "transform": {
+        "value": "args"
+      },
+      "output": {
+        "value": {}
+      }
+    },
+    "get_with_wrong_operation": {
+      "prepare": {
+        "operation": "wrong",
+        "key": "args['key']"
+      },
+      "call": {},
+      "transform": {
+        "value": "args"
+      },
+      "output": {
+        "value": {}
+      }
+    }
+  }
+}
