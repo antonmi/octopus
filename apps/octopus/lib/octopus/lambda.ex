@@ -58,7 +58,7 @@ defmodule Octopus.Lambda do
     if String.starts_with?(module_name, "Elixir.") do
       module_name
     else
-      String.to_existing_atom("Elixir.#{module_name}")
+      String.to_atom("Elixir.#{module_name}")
     end
   end
 
