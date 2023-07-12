@@ -24,6 +24,7 @@ defmodule Octopus.Lambda do
 
       {nil, module} ->
         module = build_module(module)
+
         if Utils.module_exist?(module) do
           {:ok, module}
         else

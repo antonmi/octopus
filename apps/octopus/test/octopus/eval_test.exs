@@ -75,7 +75,9 @@ defmodule Octopus.EvalTest do
   end
 
   test "eval string without code" do
-    assert_raise SyntaxError, fn -> Octopus.Eval.eval_string("my_string", []) end
+    assert_raise CompileError,
+                 "nofile:1: undefined function my_string/0 (there is no such import)",
+                 fn -> Octopus.Eval.eval_string("my_string()", []) end
   end
 
   test "for non string" do

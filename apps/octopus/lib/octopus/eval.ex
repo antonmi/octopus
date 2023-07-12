@@ -16,7 +16,7 @@ defmodule Octopus.Eval do
     {value, _} =
       string
       |> String.replace("'", "\"")
-      |> Code.string_to_quoted!(existing_atoms_only: true)
+      |> Code.string_to_quoted!()
       |> locals_calls_only()
       |> limit_kernel_calls()
       |> import_helpers(Keyword.get(args, :helpers, []))

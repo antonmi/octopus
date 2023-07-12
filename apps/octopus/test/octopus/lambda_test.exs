@@ -78,7 +78,8 @@ defmodule Octopus.LambdaTest do
 
   describe "when module provided in the definition" do
     test "define and test elixir module" do
-      definition_map = put_in(parse_definition(), ["client", "start"], %{"module" => "AnotherLambdaModule"})
+      definition_map =
+        put_in(parse_definition(), ["client", "start"], %{"module" => "AnotherLambdaModule"})
 
       definition = Definition.new(definition_map)
       Definition.define(definition)
