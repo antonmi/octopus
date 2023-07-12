@@ -16,8 +16,7 @@ defmodule Octopus.MixProject do
 
   def application do
     [
-      extra_applications: [:eex, :logger],
-      mod: {Octopus.Application, []}
+      extra_applications: [:eex, :logger]
     ]
   end
 
