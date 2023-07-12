@@ -113,7 +113,11 @@ defmodule OctopusTest do
     setup do
       {:ok, "my-service"} = Octopus.define(@definition)
       {:ok, "another-service"} = Octopus.define(Map.put(@definition, "name", "another-service"))
-      :ok
+
+      on_exit(fn ->
+        Octopus.delete("my-service")
+        Octopus.delete("another-service")
+      end)
     end
 
     test "list services" do

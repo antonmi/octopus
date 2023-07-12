@@ -1,5 +1,12 @@
 defmodule Octopus.Configs do
-  @services_namespace Application.compile_env(:octopus, :services_namespace) || "Octopus.Services"
-
-  def services_namespace, do: @services_namespace
+  def services_namespace do
+    case Application.get_env(:octopus, :services_namespace) do
+      nil ->
+        "Octopus.Services"
+      namespace when is_atom(namespace) ->
+        String.replace("#{namespace}", "Elixir.", "")
+      namespace when is_binary(namespace) ->
+        namespace
+    end
+  end
 end

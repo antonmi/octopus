@@ -16,6 +16,9 @@ defmodule Octopus.MixProject do
 
   def application do
     [
+      env: [
+        services_namespace: Octopus.Services
+      ],
       extra_applications: [:eex, :logger]
     ]
   end
